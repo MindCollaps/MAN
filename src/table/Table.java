@@ -1,6 +1,5 @@
 package table;
 
-
 import gui.DataField;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ public class Table extends JPanel {
 
     public Table() {
         this.dataFields = new ArrayList();
-        this.setBounds(0,0, 1000, 200);
+        this.setBounds(0, 0, 1000, 200);
         this.setBackground(Color.RED);
         BoxLayout panelLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
 
@@ -28,8 +27,8 @@ public class Table extends JPanel {
         this.add(tableName);
 
         this.fieldPannel = new JPanel();
-        BoxLayout fieldPannelLayout = new BoxLayout(this.fieldPannel, BoxLayout.X_AXIS);
-        this.fieldPannel.setLayout(fieldPannelLayout);
+        BoxLayout fieldPanelLayout = new BoxLayout(this.fieldPannel, BoxLayout.X_AXIS);
+        this.fieldPannel.setLayout(fieldPanelLayout);
         this.add(fieldPannel);
 
         this.addFieldButton = new JButton("Add Field");
@@ -44,15 +43,15 @@ public class Table extends JPanel {
         });
     }
 
-    public void addDataField(){
+    public void addDataField() {
         dataFields.add(new DataField());
     }
 
-    public void removeDataField(DataField field){
+    public void removeDataField(DataField field) {
         dataFields.remove(field);
     }
 
-    public void generateGui(){
+    public void generateGui() {
         this.fieldPannel.removeAll();
 
         for (DataField dataField : this.dataFields) {

@@ -27,12 +27,6 @@ public class DataField extends JPanel {
             }
         });
 
-        this.comboBox.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-
-            }
-        });
         this.add(comboBox);
     }
 }

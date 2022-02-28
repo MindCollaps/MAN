@@ -47,6 +47,7 @@ public class VisualEngine extends Frame {
                 page.remove(addTableButton);
                 page.add(new Table());
                 page.add(addTableButton);
+
                 page.repaint();
                 page.revalidate();
             }
