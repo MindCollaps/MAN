@@ -11,7 +11,7 @@ public class DataField extends JPanel {
     private table.dataFields.DataField dataField;
 
     private JComboBox<String> comboBox;
-
+    // gaming
     public DataField() {
         this.comboBox = new JComboBox<>(VisualEngine.generatorDataFieldsString);
 
