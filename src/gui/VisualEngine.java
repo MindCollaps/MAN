@@ -2,6 +2,7 @@ package gui;
 
 import table.Table;
 import table.dataFields.DataField;
+import table.dataFields.fields.DateDF;
 import table.dataFields.fields.IntegerDF;
 import table.dataFields.fields.StringDF;
 
@@ -61,7 +62,8 @@ public class VisualEngine extends Frame {
     private void loadGeneratorFields() {
         generatorDataFields = new DataField[]{
                 new StringDF(),
-                new IntegerDF()
+                new IntegerDF(),
+                new DateDF()
         };
 
         generatorDataFieldsString = new String[generatorDataFields.length];
