@@ -18,7 +18,6 @@ public class DataField extends JPanel {
         this.comboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("Changed to " + comboBox.getSelectedIndex());
                 try {
                     dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().newInstance();
                 } catch (Exception er) {
