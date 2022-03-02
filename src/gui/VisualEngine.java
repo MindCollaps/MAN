@@ -9,18 +9,32 @@ import table.dataFields.fields.StringDF;
 import javax.swing.*;
 import javax.xml.crypto.Data;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class VisualEngine extends Frame {
+public class VisualEngine extends JFrame {
 
     private Button addTableButton;
 
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
+
+    ArrayList<Table> tables = new ArrayList<Table>();
+    JScrollPane scrollPane;
+
+    JPanel canvas; // tables will be displayed on the canvas,
+
+    // ui values
+    int canvasMarginSide =20;
+    int canvasMarginTop = 20;
+    int canvasMarginBottom =200;
+    int baseCanvasHeight= 800;
+    int baseCanvasLenght= 1200;
+    int tableMargin = 280;
+    int tableMarginLenght = 230;
+
+    // ui text, only visual
+    private ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
 
     public VisualEngine() {
         loadGeneratorFields();
@@ -35,28 +49,89 @@ public class VisualEngine extends Frame {
                 System.exit(-1);
             }
         });
-        this.setBounds(40, 40, 1000, 700);
 
-        BoxLayout panelLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        this.setLayout(panelLayout);
 
+        this.setBounds(40, 40, 1500, 700);
+
+
+        //BoxLayout panelLayout = new BoxLayout(this, BoxLayout.Y_AXIS); // only for test
+        this.setLayout(null);
+
+        canvas = new JPanel();
+        canvas.setLayout(null);
+        //canvas.setBounds(50, 50, 980, 680);
+
+
+        //add table button gui stuff
         this.addTableButton = new Button("Add Table");
-        Frame page = this;
+        canvas.add(this.addTableButton);
+        setAddTableButtonPosition(tableMargin* tables.size());
+        //add table button gui end
+
+
+        Frame frame = this;
+        JPanel page = canvas;
         this.addTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 page.remove(addTableButton);
-                page.add(new Table());
-                page.add(addTableButton);
+                Table newTable = new Table();
+                addGUIReferenceToTable(newTable);
 
+                page.add(newTable);
+                newTable.setPosition(tableMargin * tables.size() +50);
+
+
+
+                tables.add(newTable);
+                setCanvasSize();
+
+                // table text
+                JTextArea newText = new JTextArea("Table "+tables.size());
+                newText.setEditable(false);
+                newText.setBounds(50, (tableMargin * tables.size())-tableMargin +30, 50, 20);
+                tableName_text.add(newText);
+                page.add(newText);
+                // table text end
+
+                page.add(addTableButton);
                 page.repaint();
                 page.revalidate();
+                frame.repaint();
+                frame.revalidate();
+
             }
         });
 
-        this.add(this.addTableButton);
+        canvas.add(this.addTableButton);
 
+        // scroll bar
+        scrollPane = new JScrollPane(canvas,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        //scrollPane.setBounds(50, 50, baseCanvasLenght +50, baseCanvasHeight +50);
+        canvas.setPreferredSize(new Dimension( baseCanvasLenght, baseCanvasHeight));
+
+
+        this.add(scrollPane);
+        //this.pack();
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
+
+        this.repaint();
+        this.revalidate();
+
+
+        // canvase scaling when chanching window size
+        setCanvasBorders();
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                setCanvasSize();
+                setCanvasBorders();
+            }
+        });
+
+
     }
 
     private void loadGeneratorFields() {
@@ -70,6 +145,41 @@ public class VisualEngine extends Frame {
 
         for (int i = 0; i < generatorDataFields.length; i++) {
             generatorDataFieldsString[i] = generatorDataFields[i].getFieldName();
+
         }
     }
+
+    public void addGUIReferenceToTable(Table table)
+    {
+        table.setGui(this);
+    }
+
+    public void setCanvasSize()
+    {
+        setAddTableButtonPosition(tableMargin* tables.size() +50);
+        int longestTable=0; // amount of datafields in the biggest Table, used for scaling and stuff
+        for (Table t:tables) {
+            longestTable = Math.max(longestTable, t.setLenght());
+        }
+        canvas.setPreferredSize(new Dimension( Math.max(baseCanvasLenght,longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size()+1) )));
+    }
+
+
+    public void setAddTableButtonPosition(int position)
+    {
+        this.addTableButton.setBounds(50,position,100,100);
+    }
+
+    public void setCanvasBorders()
+    {
+        int x = this.getWidth();
+        int y = this.getHeight();
+        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x- canvasMarginSide*2, y- canvasMarginTop -canvasMarginBottom);
+
+    }
+
+
+
+
+
 }
