@@ -7,7 +7,6 @@ import table.dataFields.fields.IntegerDF;
 import table.dataFields.fields.StringDF;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -19,22 +18,22 @@ public class VisualEngine extends JFrame {
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
 
-    ArrayList<Table> tables = new ArrayList<Table>();
-    JScrollPane scrollPane;
+    private final ArrayList<Table> tables = new ArrayList<Table>();
+    private JScrollPane scrollPane;
 
-    JPanel canvas; // tables will be displayed on the canvas,
+    private JPanel canvas; // tables will be displayed on the canvas,
 
     // ui values
-    int canvasMarginSide =20;
-    int canvasMarginTop = 20;
-    int canvasMarginBottom =200;
-    int baseCanvasHeight= 800;
-    int baseCanvasLenght= 1200;
-    int tableMargin = 280;
-    int tableMarginLenght = 230;
+    private final int canvasMarginSide = 20;
+    private final int canvasMarginTop = 20;
+    private final int canvasMarginBottom = 200;
+    private final int baseCanvasHeight = 800;
+    private final int baseCanvasLenght = 1200;
+    private final int tableMargin = 280;
+    private final int tableMarginLenght = 230;
 
     // ui text, only visual
-    private ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
+    private final ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
 
     public VisualEngine() {
         loadGeneratorFields();
@@ -42,7 +41,7 @@ public class VisualEngine extends JFrame {
         buildGui();
     }
 
-    private void buildGui(){
+    private void buildGui() {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -65,7 +64,7 @@ public class VisualEngine extends JFrame {
         //add table button gui stuff
         this.addTableButton = new Button("Add Table");
         canvas.add(this.addTableButton);
-        setAddTableButtonPosition(tableMargin* tables.size());
+        setAddTableButtonPosition(tableMargin * tables.size());
         //add table button gui end
 
 
@@ -79,17 +78,16 @@ public class VisualEngine extends JFrame {
                 addGUIReferenceToTable(newTable);
 
                 page.add(newTable);
-                newTable.setPosition(tableMargin * tables.size() +50);
-
+                newTable.setPosition(tableMargin * tables.size() + 50);
 
 
                 tables.add(newTable);
                 setCanvasSize();
 
                 // table text
-                JTextArea newText = new JTextArea("Table "+tables.size());
+                JTextArea newText = new JTextArea("Table " + tables.size());
                 newText.setEditable(false);
-                newText.setBounds(50, (tableMargin * tables.size())-tableMargin +30, 50, 20);
+                newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
                 tableName_text.add(newText);
                 page.add(newText);
                 // table text end
@@ -106,10 +104,10 @@ public class VisualEngine extends JFrame {
         canvas.add(this.addTableButton);
 
         // scroll bar
-        scrollPane = new JScrollPane(canvas,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane = new JScrollPane(canvas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         //scrollPane.setBounds(50, 50, baseCanvasLenght +50, baseCanvasHeight +50);
-        canvas.setPreferredSize(new Dimension( baseCanvasLenght, baseCanvasHeight));
+        canvas.setPreferredSize(new Dimension(baseCanvasLenght, baseCanvasHeight));
 
 
         this.add(scrollPane);
@@ -149,37 +147,30 @@ public class VisualEngine extends JFrame {
         }
     }
 
-    public void addGUIReferenceToTable(Table table)
-    {
+    public void addGUIReferenceToTable(Table table) {
         table.setGui(this);
     }
 
-    public void setCanvasSize()
-    {
-        setAddTableButtonPosition(tableMargin* tables.size() +50);
-        int longestTable=0; // amount of datafields in the biggest Table, used for scaling and stuff
-        for (Table t:tables) {
+    public void setCanvasSize() {
+        setAddTableButtonPosition(tableMargin * tables.size() + 50);
+        int longestTable = 0; // amount of datafields in the biggest Table, used for scaling and stuff
+        for (Table t : tables) {
             longestTable = Math.max(longestTable, t.setLenght());
         }
-        canvas.setPreferredSize(new Dimension( Math.max(baseCanvasLenght,longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size()+1) )));
+        canvas.setPreferredSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
     }
 
 
-    public void setAddTableButtonPosition(int position)
-    {
-        this.addTableButton.setBounds(50,position,100,100);
+    public void setAddTableButtonPosition(int position) {
+        this.addTableButton.setBounds(50, position, 100, 100);
     }
 
-    public void setCanvasBorders()
-    {
+    public void setCanvasBorders() {
         int x = this.getWidth();
         int y = this.getHeight();
-        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x- canvasMarginSide*2, y- canvasMarginTop -canvasMarginBottom);
+        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x - canvasMarginSide * 2, y - canvasMarginTop - canvasMarginBottom);
 
     }
-
-
-
 
 
 }

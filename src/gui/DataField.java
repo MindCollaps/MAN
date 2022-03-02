@@ -10,9 +10,9 @@ public class DataField extends JPanel {
 
     private table.dataFields.DataField dataField;
 
-    private JTextField name;  // has no function yet
-    private JButton options; // has no function yet
-    private JComboBox<String> comboBox;
+    private final JTextField name;  // has no function yet
+    private final JButton options; // has no function yet
+    private final JComboBox<String> comboBox;
     // gaming
     public DataField() {
 

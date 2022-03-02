@@ -4,7 +4,7 @@ import table.dataFields.DataType;
 
 public abstract class PageFieldGrabber {
 
-    private DataType type;
+    private final DataType type;
 
     public PageFieldGrabber(DataType type) {
         this.type = type;

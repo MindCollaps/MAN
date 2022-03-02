@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class PageField {
 
-    private String fieldName;
+    private final String fieldName;
     private PageFieldGrabber grabber;
     private Component component;
 

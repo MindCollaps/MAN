@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class SettingsPage extends JPanel {
 
-    private Label settingName;
+    private final Label settingName;
     private ArrayList<PageField> fields;
 
     public SettingsPage(String settingsName, ArrayList<PageField> fields) {
