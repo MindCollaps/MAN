@@ -1,5 +1,6 @@
 package table.dataFields;
 
+import generator.FieldData;
 import generator.GeneratorSession;
 import gui.settingsPage.SettingsPage;
 import gui.settingsPage.VisualDataField;

@@ -16,8 +16,8 @@ import java.awt.event.MouseEvent;
 public class VisualDataField extends JPanel {
 
     private final Table table;
-    private final JTextField name;  // has no function yet
-    private final JButton options; // has no function yet
+    private final JTextField name;
+    private final JButton options;
     private final JComboBox<String> comboBox;
     private DataField dataField;
 
@@ -26,7 +26,7 @@ public class VisualDataField extends JPanel {
 
         this.setLayout(null);
 
-        this.name = new JTextField("name");
+        this.name = new JTextField();
         this.name.setBounds(0, 0, 100, 50);
 
         this.comboBox = new JComboBox<>(VisualEngine.generatorDataFieldsString);
@@ -78,5 +78,13 @@ public class VisualDataField extends JPanel {
 
     public void closeSettings() {
         table.closeSettings();
+    }
+
+    public DataField getDataField() {
+        return dataField;
+    }
+
+    public String getFieldName(){
+        return name.getText();
     }
 }

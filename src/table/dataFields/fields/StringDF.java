@@ -1,22 +1,34 @@
 package table.dataFields.fields;
 
 import generator.GeneratorSession;
-import gui.settingsPage.SettingsAction;
+import gui.settingsPage.pageField.PageFieldAction;
 import gui.settingsPage.SettingsPage;
 import gui.settingsPage.VisualDataField;
+import gui.settingsPage.pageField.DefaultValueSetter;
 import gui.settingsPage.pageField.PageField;
 import gui.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
-import table.dataFields.FieldData;
+import generator.FieldData;
 
 import javax.swing.*;
+import java.nio.charset.Charset;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.random.RandomGenerator;
 
 public class StringDF extends DataField {
+
+    public static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String lower = upper.toLowerCase();
+    public static final String digits = "0123456789";
+    public static final String alphanum = upper + lower + digits;
 
     //Settings
     private boolean isName = false;
     private int length = 10;
+
+    private String[] vornamen = {"Noah", "Elias"};
 
     @Override
     public int getPriority() {
@@ -25,7 +37,15 @@ public class StringDF extends DataField {
 
     @Override
     public FieldData getData(GeneratorSession session) {
-        return null;
+        if(isName){
+            return new FieldData(vornamen[ThreadLocalRandom.current().nextInt(0, vornamen.length)]);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                sb.append(alphanum.charAt(ThreadLocalRandom.current().nextInt(0, alphanum.length())));
+            }
+            return new FieldData(sb.toString());
+        }
     }
 
     @Override
@@ -35,14 +55,19 @@ public class StringDF extends DataField {
             public boolean getBoolean(PageField<JCheckBox> page, JCheckBox jCheckBox) {
                 return jCheckBox.isSelected();
             }
-        }, new SettingsAction() {
+        }, new PageFieldAction() {
             @Override
-            public void onSave(PageField field) {
-                isName = field.getBoolean();
+            public void onSave(PageField pageField) {
+                isName = pageField.getBoolean();
+            }
+        }, new DefaultValueSetter<JCheckBox>() {
+            @Override
+            public void setDefaultData(JCheckBox component) {
+                component.setSelected(isName);
             }
         });
 
-        PageField<JTextField> lengthField = new PageField<>("Is Name Field", new JTextField(), new PageFieldGrabber<JTextField>() {
+        PageField<JTextField> lengthField = new PageField<>("String length", new JTextField(), new PageFieldGrabber<JTextField>() {
             @Override
             public String getDataString(PageField<JTextField> page, JTextField jTextField) {
                 return jTextField.getText();
@@ -57,14 +82,19 @@ public class StringDF extends DataField {
                 }
                 return 0;
             }
-        }, new SettingsAction<JTextField>() {
+        }, new PageFieldAction<JTextField>() {
             @Override
-            public void onSave(PageField<JTextField> field) {
+            public void onSave(PageField<JTextField> pageField) {
                 try {
-                    length = Integer.parseInt(field.getDataString());
+                    length = Integer.parseInt(pageField.getDataString());
                 } catch (Exception e) {
                     //TODO: Print error message
                 }
+            }
+        }, new DefaultValueSetter<JTextField>() {
+            @Override
+            public void setDefaultData(JTextField component) {
+                component.setText(String.valueOf(length));
             }
         });
 
