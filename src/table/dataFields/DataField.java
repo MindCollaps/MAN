@@ -41,5 +41,9 @@ public abstract class DataField {
      */
     public abstract DataType getDataType();
 
+    /**
+     *
+     * @return Returns the name of the Field which is shown in the drop-down menu on the GUI
+     */
     public abstract String getFieldName();
 }

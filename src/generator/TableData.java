@@ -41,6 +41,10 @@ public class TableData {
         return tableName;
     }
 
+    /**
+     *
+     * @return Returns a SQL statement that can't be used to insert data into a existing table
+     */
     public String getInsertString() {
         StringBuilder data = new StringBuilder("INSERT INTO " + tableName + " (");
         for (int i = 0; i < dataFieldData.length; i++) {
@@ -68,6 +72,10 @@ public class TableData {
         return data.toString();
     }
 
+    /**
+     *
+     * @return Returns a SQL statement which creates a table with its fields and Datatypes
+     */
     public String getCreateStatement(){
         StringBuilder data = new StringBuilder("CREATE TABLE " + tableName + " (");
         for (int i = 0; i < dataFieldData.length; i++) {
