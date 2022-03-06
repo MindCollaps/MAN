@@ -24,7 +24,7 @@ public class VisualEngine extends JFrame {
     private final int canvasMarginBottom = 200;
     private final int baseCanvasHeight = 800;
     private final int baseCanvasLenght = 1200;
-    private final int tableMargin = 280;
+    private final int tableMargin = 230;
     private final int tableMarginLenght = 230;
     // ui text, only visual
     private final ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
@@ -85,6 +85,7 @@ public class VisualEngine extends JFrame {
 
                 // table text
                 JTextArea newText = new JTextArea("Table " + tables.size());
+                newTable.SetTableNumber(tables.size()); 
                 newText.setEditable(false);
                 newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
                 tableName_text.add(newText);
