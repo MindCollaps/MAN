@@ -1,16 +1,18 @@
 package table.dataFields.fields;
 
 import generator.GeneratorSession;
-import gui.settingsPage.SettingsAction;
+import gui.settingsPage.pageField.PageFieldAction;
 import gui.settingsPage.SettingsPage;
 import gui.settingsPage.VisualDataField;
+import gui.settingsPage.pageField.DefaultValueSetter;
 import gui.settingsPage.pageField.PageField;
 import gui.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
-import table.dataFields.FieldData;
+import generator.FieldData;
 
 import javax.swing.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class IntegerDF extends DataField {
 
@@ -25,12 +27,13 @@ public class IntegerDF extends DataField {
 
     @Override
     public FieldData getData(GeneratorSession session) {
-        return null;
+        return new FieldData(Integer.toString(ThreadLocalRandom.current().nextInt(minInt, maxInt)));
     }
 
     @Override
     public SettingsPage getSettingsPage(VisualDataField field) {
         PageField<JTextField> minIntField = new PageField<>("Min Value", new JTextField(minInt), new PageFieldGrabber<JTextField>() {
+
             @Override
             public String getDataString(PageField<JTextField> page, JTextField jTextField) {
                 return jTextField.getText();
@@ -45,14 +48,19 @@ public class IntegerDF extends DataField {
                 }
                 return 0;
             }
-        }, new SettingsAction<JTextField>() {
+        }, new PageFieldAction<JTextField>() {
             @Override
-            public void onSave(PageField<JTextField> field) {
+            public void onSave(PageField<JTextField> pageField) {
                 try {
-                    minInt = Integer.parseInt(field.getDataString());
+                    minInt = Integer.parseInt(pageField.getDataString());
                 } catch (Exception e) {
                     //TODO: Print error message
                 }
+            }
+        }, new DefaultValueSetter<JTextField>() {
+            @Override
+            public void setDefaultData(JTextField component) {
+                component.setText(String.valueOf(minInt));
             }
         });
 
@@ -71,14 +79,19 @@ public class IntegerDF extends DataField {
                 }
                 return 0;
             }
-        }, new SettingsAction<JTextField>() {
+        }, new PageFieldAction<JTextField>() {
             @Override
-            public void onSave(PageField<JTextField> field) {
+            public void onSave(PageField<JTextField> pageField) {
                 try {
-                    maxInt = Integer.parseInt(field.getDataString());
+                    maxInt = Integer.parseInt(pageField.getDataString());
                 } catch (Exception e) {
                     //TODO: Print error message
                 }
+            }
+        }, new DefaultValueSetter<JTextField>() {
+            @Override
+            public void setDefaultData(JTextField component) {
+                component.setText(String.valueOf(maxInt));
             }
         });
 
@@ -87,11 +100,11 @@ public class IntegerDF extends DataField {
 
     @Override
     public DataType getDataType() {
-        return DataType.String;
+        return DataType.Number;
     }
 
     @Override
     public String getFieldName() {
-        return "Int";
+        return "int";
     }
 }

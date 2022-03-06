@@ -96,4 +96,12 @@ public class VisualDataField extends JPanel {
     public void closeSettings() {
         table.closeSettings();
     }
+
+    public DataField getDataField() {
+        return dataField;
+    }
+
+    public String getFieldName(){
+        return name.getText();
+    }
 }

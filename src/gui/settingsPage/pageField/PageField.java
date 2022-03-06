@@ -1,7 +1,5 @@
 package gui.settingsPage.pageField;
 
-import gui.settingsPage.SettingsAction;
-
 import java.awt.*;
 
 /**
@@ -13,20 +11,22 @@ public class PageField<T extends Component> {
     private final String fieldName;
     private final PageFieldGrabber<T> grabber;
     private final T component;
-    private final SettingsAction action;
+    private final PageFieldAction action;
+    private final DefaultValueSetter setter;
 
     /**
      * @param fieldName The name of the field that can be given a data
      * @param component The component where the data can be input
      */
-    public PageField(String fieldName, T component, PageFieldGrabber<T> grabber, SettingsAction action) {
+    public PageField(String fieldName, T component, PageFieldGrabber<T> grabber, PageFieldAction<T> action, DefaultValueSetter<T> setter) {
         this.action = action;
         this.fieldName = fieldName;
         this.component = component;
         this.grabber = grabber;
+        this.setter = setter;
     }
 
-    public SettingsAction getAction() {
+    public PageFieldAction getAction() {
         return action;
     }
 
@@ -52,5 +52,9 @@ public class PageField<T extends Component> {
 
     public boolean getBoolean() {
         return grabber.getBoolean(this, component);
+    }
+
+    public DefaultValueSetter getSetter() {
+        return setter;
     }
 }

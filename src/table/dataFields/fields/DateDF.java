@@ -1,19 +1,21 @@
 package table.dataFields.fields;
 
+import generator.FieldData;
 import generator.GeneratorSession;
-import gui.settingsPage.SettingsAction;
+import gui.settingsPage.pageField.PageFieldAction;
 import gui.settingsPage.SettingsPage;
 import gui.settingsPage.VisualDataField;
+import gui.settingsPage.pageField.DefaultValueSetter;
 import gui.settingsPage.pageField.PageField;
 import gui.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
-import table.dataFields.FieldData;
 
 import javax.swing.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DateDF extends DataField {
 
@@ -37,7 +39,17 @@ public class DateDF extends DataField {
 
     @Override
     public FieldData getData(GeneratorSession session) {
-        return null;
+        long startSeconds = minDate.getTime();
+        long endSeconds = maxDate.getTime();
+        long random = ThreadLocalRandom
+                .current()
+                .nextLong(startSeconds, endSeconds);
+
+        try {
+            return new FieldData(parseString(new Date(random)));
+        } catch (Exception ignored) {
+        }
+        return new FieldData("01.01.2002");
     }
 
     @Override
@@ -47,13 +59,21 @@ public class DateDF extends DataField {
             public String getDataString(PageField<JTextField> page, JTextField jTextField) {
                 return jTextField.getText();
             }
-        }, new SettingsAction<JTextField>() {
+        }, new PageFieldAction<JTextField>() {
             @Override
             public void onSave(PageField<JTextField> field) {
                 try {
                     minDate = parseDate(field.getDataString());
                 } catch (Exception e) {
                     //TODO: print error message
+                }
+            }
+        }, new DefaultValueSetter<JTextField>() {
+            @Override
+            public void setDefaultData(JTextField component) {
+                try {
+                    component.setText(parseString(minDate));
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -63,13 +83,22 @@ public class DateDF extends DataField {
             public String getDataString(PageField<JTextField> page, JTextField jTextField) {
                 return jTextField.getText();
             }
-        }, new SettingsAction<JTextField>() {
+        }, new PageFieldAction<JTextField>() {
             @Override
-            public void onSave(PageField<JTextField> field) {
+            public void onSave(PageField<JTextField> pageField) {
                 try {
-                    maxDate = parseDate(field.getDataString());
+                    maxDate = parseDate(pageField.getDataString());
                 } catch (Exception e) {
                     //TODO: print error message
+                }
+            }
+        }, new DefaultValueSetter<JTextField>() {
+            @Override
+            public void setDefaultData(JTextField component) {
+                try {
+                    component.setText(parseString(maxDate));
+                } catch (Exception ignored) {
+
                 }
             }
         });
@@ -89,7 +118,11 @@ public class DateDF extends DataField {
 
     private Date parseDate(String data) throws Exception {
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        Date date = null;
         return format.parse(data);
+    }
+
+    private String parseString(Date data) throws Exception {
+        DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        return format.format(data);
     }
 }

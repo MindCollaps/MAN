@@ -73,6 +73,7 @@ public class SettingsPage extends JPanel {
                 for (PageField field : fields) {
                     field.getAction().onSave(field);
                 }
+                closeSettings();
             }
         });
 
@@ -81,6 +82,10 @@ public class SettingsPage extends JPanel {
         panel.setLayout(panelLayout);
         panel.add(saveButton);
         panel.add(cancelButton);
+
+        for (PageField field : this.fields) {
+            field.getSetter().setDefaultData(field.getComponent());
+        }
 
         this.add(panel);
     }

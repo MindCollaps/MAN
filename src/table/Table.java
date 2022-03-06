@@ -148,8 +148,25 @@ public class Table extends JPanel {
         gui.closeSettings();
     }
 
-    public void SetTableNumber(int tableNumber)
-    {
+
+    public void SetTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
+    }
+
+    public ArrayList<VisualDataField> getDataFields() {
+        return dataFields;
+    }
+
+    public int getTableCount(){
+        try {
+            return Integer.parseInt(tableCount.getText());
+        } catch (Exception e){
+            //TODO: Print error message
+        }
+        return 0;
+    }
+
+    public String getTableName(){
+        return tableName.getText();
     }
 }

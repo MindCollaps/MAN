@@ -1,5 +1,6 @@
 package gui;
 
+import generator.GeneratorSession;
 import gui.settingsPage.SettingsPage;
 import gui.settingsPage.VisualDataField;
 import table.Table;
@@ -28,11 +29,17 @@ public class VisualEngine extends JFrame {
     private final int tableMarginLenght = 230;
     // ui text, only visual
     private final ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
-    private Button addTableButton;
+    private JButton addTableButton;
     private JScrollPane scrollPane;
     private JPanel canvas; // tables will be displayed on the canvas,
+    private JButton generateButton;
+    private JPanel contentPanel;
+    private JPanel bottomPanel;
     //Settings page
     private JDialog settingsPage;
+
+    //Generator stuff
+    private GeneratorSession session;
 
     public VisualEngine() {
         loadGeneratorFields();
@@ -48,40 +55,42 @@ public class VisualEngine extends JFrame {
             }
         });
 
-
         this.setBounds(40, 40, 1500, 700);
 
-
-        //BoxLayout panelLayout = new BoxLayout(this, BoxLayout.Y_AXIS); // only for test
         this.setLayout(null);
 
         canvas = new JPanel();
         canvas.setLayout(null);
         //canvas.setBounds(50, 50, 980, 680);
 
+        this.generateButton = new JButton("Generate");
+        this.generateButton.setBounds(0, 0, 100, 50);
+        this.generateButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                generateData();
+            }
+        });
 
         //add table button gui stuff
-        this.addTableButton = new Button("Add Table");
+        this.addTableButton = new JButton("Add Table");
         canvas.add(this.addTableButton);
         setAddTableButtonPosition(tableMargin * tables.size());
         //add table button gui end
 
 
         Frame frame = this;
-        JPanel page = canvas;
         this.addTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                page.remove(addTableButton);
+                canvas.remove(addTableButton);
                 Table newTable = new Table();
                 addGUIReferenceToTable(newTable);
 
-                page.add(newTable);
+                canvas.add(newTable);
                 newTable.setPosition(tableMargin * tables.size() + 50);
 
-
                 tables.add(newTable);
-                setCanvasSize();
 
                 // table text
                 JTextArea newText = new JTextArea("Table " + tables.size());
@@ -89,14 +98,11 @@ public class VisualEngine extends JFrame {
                 newText.setEditable(false);
                 newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
                 tableName_text.add(newText);
-                page.add(newText);
+                canvas.add(newText);
                 // table text end
 
-                page.add(addTableButton);
-                page.repaint();
-                page.revalidate();
-                frame.repaint();
-                frame.revalidate();
+                canvas.add(addTableButton);
+                setContentSize();
             }
         });
 
@@ -108,25 +114,61 @@ public class VisualEngine extends JFrame {
         //scrollPane.setBounds(50, 50, baseCanvasLenght +50, baseCanvasHeight +50);
         canvas.setPreferredSize(new Dimension(baseCanvasLenght, baseCanvasHeight));
 
+        bottomPanel = new JPanel();
+        BoxLayout bottomLayout = new BoxLayout(bottomPanel, BoxLayout.X_AXIS);
+        bottomPanel.setLayout(bottomLayout);
+        bottomPanel.add(generateButton);
+        bottomPanel.setVisible(true);
 
-        this.add(scrollPane);
-        //this.pack();
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setVisible(true);
+        contentPanel = new JPanel();
+        contentPanel.setLayout(null);
+        contentPanel.add(scrollPane);
+        contentPanel.add(bottomPanel);
+        contentPanel.setVisible(true);
 
+        this.add(contentPanel);
 
         // canvase scaling when chanching window size
-        setCanvasBorders();
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                setCanvasSize();
-                setCanvasBorders();
+                setContentSize();
             }
         });
 
+        this.setVisible(true);
+        setContentSize();
+    }
+
+    private void setContentSize() {
+        this.contentPanel.setBounds(0, 0, this.getWidth(), this.getHeight());
+
+        setCanvasSize();
+        setCanvasBorders();
+
+        setBottomBarSize();
+
         this.repaint();
-        this.revalidate();
+    }
+
+    private void setBottomBarSize() {
+        int x = this.getWidth();
+        bottomPanel.setBounds(20, scrollPane.getY() + scrollPane.getHeight() + 30, x - 40, 100);
+    }
+
+    private void setCanvasBorders() {
+        int x = this.getWidth();
+        int y = this.getHeight();
+        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x - canvasMarginSide * 2, y - canvasMarginTop - canvasMarginBottom);
+    }
+
+    public void setCanvasSize() {
+        setAddTableButtonPosition(tableMargin * tables.size() + 50);
+        int longestTable = 0; // amount of datafields in the biggest Table, used for scaling and stuff
+        for (Table t : tables) {
+            longestTable = Math.max(longestTable, t.setLenght());
+        }
+        canvas.setSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
     }
 
     private void loadGeneratorFields() {
@@ -148,25 +190,8 @@ public class VisualEngine extends JFrame {
         table.setGui(this);
     }
 
-    public void setCanvasSize() {
-        setAddTableButtonPosition(tableMargin * tables.size() + 50);
-        int longestTable = 0; // amount of datafields in the biggest Table, used for scaling and stuff
-        for (Table t : tables) {
-            longestTable = Math.max(longestTable, t.setLenght());
-        }
-        canvas.setPreferredSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
-    }
-
-
-    public void setAddTableButtonPosition(int position) {
+    private void setAddTableButtonPosition(int position) {
         this.addTableButton.setBounds(50, position, 100, 100);
-    }
-
-    public void setCanvasBorders() {
-        int x = this.getWidth();
-        int y = this.getHeight();
-        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x - canvasMarginSide * 2, y - canvasMarginTop - canvasMarginBottom);
-
     }
 
     public void openSettings(SettingsPage page, VisualDataField field, Table table) {
@@ -185,5 +210,11 @@ public class VisualEngine extends JFrame {
         if (this.settingsPage != null) {
             this.settingsPage.dispose();
         }
+    }
+
+    public void generateData() {
+        if (this.tables != null)
+            if (this.tables.size() > 0)
+                session = new GeneratorSession(this.tables.toArray(new Table[]{}));
     }
 }
