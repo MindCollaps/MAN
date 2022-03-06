@@ -2,6 +2,9 @@ package generator;
 
 import table.Table;
 
+/**
+ * The generator session handles anything that is related to generating data and SQL statements
+ */
 public class GeneratorSession {
 
     private Table[] tables;
