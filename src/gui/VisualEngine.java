@@ -1,5 +1,7 @@
 package gui;
 
+import gui.settingsPage.SettingsPage;
+import gui.settingsPage.VisualDataField;
 import table.Table;
 import table.dataFields.DataField;
 import table.dataFields.fields.DateDF;
@@ -13,16 +15,9 @@ import java.util.ArrayList;
 
 public class VisualEngine extends JFrame {
 
-    private Button addTableButton;
-
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
-
     private final ArrayList<Table> tables = new ArrayList<Table>();
-    private JScrollPane scrollPane;
-
-    private JPanel canvas; // tables will be displayed on the canvas,
-
     // ui values
     private final int canvasMarginSide = 20;
     private final int canvasMarginTop = 20;
@@ -31,9 +26,13 @@ public class VisualEngine extends JFrame {
     private final int baseCanvasLenght = 1200;
     private final int tableMargin = 280;
     private final int tableMarginLenght = 230;
-
     // ui text, only visual
     private final ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
+    private Button addTableButton;
+    private JScrollPane scrollPane;
+    private JPanel canvas; // tables will be displayed on the canvas,
+    //Settings page
+    private JDialog settingsPage;
 
     public VisualEngine() {
         loadGeneratorFields();
@@ -97,7 +96,6 @@ public class VisualEngine extends JFrame {
                 page.revalidate();
                 frame.repaint();
                 frame.revalidate();
-
             }
         });
 
@@ -115,9 +113,6 @@ public class VisualEngine extends JFrame {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(true);
 
-        this.repaint();
-        this.revalidate();
-
 
         // canvase scaling when chanching window size
         setCanvasBorders();
@@ -129,7 +124,8 @@ public class VisualEngine extends JFrame {
             }
         });
 
-
+        this.repaint();
+        this.revalidate();
     }
 
     private void loadGeneratorFields() {
@@ -172,5 +168,21 @@ public class VisualEngine extends JFrame {
 
     }
 
+    public void openSettings(SettingsPage page, VisualDataField field, Table table) {
+        if (page != null && field != null && table != null) {
+            settingsPage = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            settingsPage.setContentPane(page);
+            settingsPage.setBounds(100, 100, page.getWidth(), page.getHeight());
+            settingsPage.repaint();
+            settingsPage.revalidate();
+            settingsPage.setVisible(true);
+        } else
+            System.err.println("Can't open settings, because one of the values is null!");
+    }
 
+    public void closeSettings() {
+        if (this.settingsPage != null) {
+            this.settingsPage.dispose();
+        }
+    }
 }

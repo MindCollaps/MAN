@@ -1,7 +1,8 @@
 package table;
 
-import gui.DataField;
 import gui.VisualEngine;
+import gui.settingsPage.SettingsPage;
+import gui.settingsPage.VisualDataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,28 +10,23 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * This class creates and manages a created Table in the GUI. It holds all the DataFields and manages major events like open- and closeSettings
+ */
 public class Table extends JPanel {
 
-    private VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
-
-    public void setGui(VisualEngine gui) {
-        this.gui = gui;
-    }
-
-    private final ArrayList<DataField> dataFields;
+    private final ArrayList<VisualDataField> dataFields;
     private final JTextField tableName;
     private final JTextField tableCount; // not done yet
     private final JButton tableOptionsButton; // notDoneYet
     private final JButton addFieldButton;
-    private final JPanel fieldPannel;
-
+    private final JPanel fieldPanel;
     // ui scale values
-    private final int minTableLenght = 300;
-    private final int TableHeight = 200;
-    private final int dataFieldLenght = 120;
+    private final int minTableLength = 300;
+    private final int tableHeight = 200;
+    private final int dataFieldLength = 120;
     private final int dataFieldHeight = 100;
-
-
+    private VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
     public Table() {
         this.dataFields = new ArrayList();
 
@@ -59,17 +55,17 @@ public class Table extends JPanel {
         // option button end
 
         // fieldpannel
-        this.fieldPannel = new JPanel();
+        this.fieldPanel = new JPanel();
         //BoxLayout fieldPanelLayout = new BoxLayout(this.fieldPannel, BoxLayout.X_AXIS);
-        this.fieldPannel.setLayout(null);
-        this.fieldPannel.setBounds(00, 100, 700, 100);
-        this.add(fieldPannel);
+        this.fieldPanel.setLayout(null);
+        this.fieldPanel.setBounds(00, 100, 700, 100);
+        this.add(fieldPanel);
         // fieldpannel end
 
         // add field button
         this.addFieldButton = new JButton("Add Field");
         setAddButtonPosition();
-        fieldPannel.add(addFieldButton);
+        fieldPanel.add(addFieldButton);
         // add field button end
 
 
@@ -82,27 +78,31 @@ public class Table extends JPanel {
         });
     }
 
-    public void addDataField() {
-        dataFields.add(new DataField());
+    public void setGui(VisualEngine gui) {
+        this.gui = gui;
     }
 
-    public void removeDataField(DataField field) {
+    public void addDataField() {
+        dataFields.add(new VisualDataField(this));
+    }
+
+    public void removeDataField(VisualDataField field) {
         dataFields.remove(field);
     }
 
     // when field gets added or something
     public void generateGui() {
-        this.fieldPannel.removeAll();
+        this.fieldPanel.removeAll();
 
         int i = 0;
-        for (DataField dataField : this.dataFields) {
-            this.fieldPannel.add(dataField);
-            dataField.setBounds(i * dataFieldLenght, 000, 100, 100);
+        for (VisualDataField dataField : this.dataFields) {
+            this.fieldPanel.add(dataField);
+            dataField.setBounds(i * dataFieldLength, 000, 100, 100);
 
             i++;
         }
 
-        this.fieldPannel.add(addFieldButton);
+        this.fieldPanel.add(addFieldButton);
 
         setAddButtonPosition();
         sescaleTable();
@@ -112,23 +112,31 @@ public class Table extends JPanel {
     }
 
     public void setPosition(int position) {
-        this.setBounds(50, position, Math.max(minTableLenght, dataFieldLenght * (dataFields.size() + 1)), 200);
+        this.setBounds(50, position, Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1)), 200);
         this.repaint();
         this.revalidate();
     }
 
     public void sescaleTable() {
-        this.setBounds(this.getBounds().x, this.getBounds().y, Math.max(minTableLenght, dataFieldLenght * (dataFields.size() + 1)), TableHeight);
-        this.fieldPannel.setBounds(00, 100, Math.max(minTableLenght, dataFieldLenght * (dataFields.size() + 1)), TableHeight);
+        this.setBounds(this.getBounds().x, this.getBounds().y, Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1)), tableHeight);
+        this.fieldPanel.setBounds(00, 100, Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1)), tableHeight);
         this.repaint();
         this.revalidate();
     }
 
     public int setLenght() {
-        return Math.max(minTableLenght, dataFieldLenght * (dataFields.size() + 1));
+        return Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1));
     }
 
     public void setAddButtonPosition() {
-        this.addFieldButton.setBounds(dataFields.size() * dataFieldLenght, 000, 100, 100);
+        this.addFieldButton.setBounds(dataFields.size() * dataFieldLength, 000, 100, 100);
+    }
+
+    public void openSettings(SettingsPage page, VisualDataField field) {
+        gui.openSettings(page, field, this);
+    }
+
+    public void closeSettings() {
+        gui.closeSettings();
     }
 }
