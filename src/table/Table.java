@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class Table extends JPanel {
 
     Icon icon = new ImageIcon("Pictures/options2.jpg");
-
+    Icon icon2 = new ImageIcon("Pictures/plus.jpg");
 
     private final ArrayList<VisualDataField> dataFields;
     private final JTextField tableName;
@@ -70,7 +70,7 @@ public class Table extends JPanel {
         // fieldpannel end
 
         // add field button
-        this.addFieldButton = new JButton("Add Field");
+        this.addFieldButton = new JButton(icon2);
         setAddButtonPosition();
         fieldPanel.add(addFieldButton);
         // add field button end

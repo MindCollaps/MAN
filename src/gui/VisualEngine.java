@@ -16,6 +16,8 @@ import java.util.ArrayList;
 
 public class VisualEngine extends JFrame {
 
+    Icon icon = new ImageIcon("Pictures/plus.jpg");
+
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
     private final ArrayList<Table> tables = new ArrayList<Table>();
@@ -73,7 +75,7 @@ public class VisualEngine extends JFrame {
         });
 
         //add table button gui stuff
-        this.addTableButton = new JButton("Add Table");
+        this.addTableButton = new JButton(icon);
         canvas.add(this.addTableButton);
         setAddTableButtonPosition(tableMargin * tables.size());
         //add table button gui end

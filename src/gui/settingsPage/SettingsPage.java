@@ -25,7 +25,7 @@ public class SettingsPage extends JPanel {
 
     private final VisualDataField field;
 
-    public SettingsPage(String settingsName, VisualDataField dataField, PageField... fields) {
+    public SettingsPage(String settingsName, VisualDataField dataField, PageField ... fields) {
         this.field = dataField;
         this.settingsName = settingsName;
         this.fields = new ArrayList<>();
