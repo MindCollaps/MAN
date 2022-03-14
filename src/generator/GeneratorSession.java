@@ -2,10 +2,16 @@ package generator;
 
 import table.Table;
 
+import java.util.ArrayList;
+
 /**
  * The generator session handles anything that is related to generating data and SQL statements
  */
 public class GeneratorSession {
+
+    private boolean hasErrors;
+
+    private ArrayList<String> errors;
 
     private Table[] tables;
 
@@ -13,21 +19,40 @@ public class GeneratorSession {
 
     public GeneratorSession(Table[] tables) {
         this.tables = tables;
+        hasErrors = false;
 
         gatherInformation();
-        System.out.println(getCreateStatement());
-        System.out.println(getInsert());
-
     }
 
     public void gatherInformation() {
+        errors = new ArrayList<>();
         tableData = new TableData[tables.length];
         for (int i = 0; i < tables.length; i++) {
             tableData[i] = new TableData(this, tables[i]);
+            if(tableData[i].getErrors().size() != 0)
+                errors.addAll(tableData[i].getErrors());
+        }
+
+        for (int i = 0; i < tableData.length; i++) {
+            if(tableData[i].getTableName().length() == 0)
+                continue;
+
+            for (int j = i+1; j < tableData.length; j++) {
+                if(tableData[j].getTableName().length() == 0)
+                    continue;
+                if(tableData[i].getTableName().equals(tableData[j].getTableName())){
+                    errors.add(tableData[i].getGuiName() + " has the same name as " + tableData[j].getGuiName());
+                }
+            }
         }
 
         for (TableData tableDatum : tableData) {
             System.out.println(tableDatum);
+        }
+
+        System.out.println("Errors: ");
+        for (String error : errors) {
+            System.out.println(error);
         }
     }
 
@@ -54,5 +79,13 @@ public class GeneratorSession {
                 builder.append("\n");
         }
         return builder.toString();
+    }
+
+    public void noticedError(){
+        hasErrors= true;
+    }
+
+    public boolean hasErrors() {
+        return hasErrors;
     }
 }

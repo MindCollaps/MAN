@@ -15,8 +15,10 @@ import java.util.ArrayList;
  */
 public class Table extends JPanel {
 
-    Icon icon = new ImageIcon("Pictures/options2.jpg");
-    Icon icon2 = new ImageIcon("Pictures/plus.jpg");
+    private final Icon icon = new ImageIcon("Pictures/options2.jpg");
+    private final Icon icon2 = new ImageIcon("Pictures/plus.jpg");
+
+    private VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
 
     private final ArrayList<VisualDataField> dataFields;
     private final JTextField tableName;
@@ -32,8 +34,12 @@ public class Table extends JPanel {
     private final int dataFieldLeftRightMargin = 20;
     private final int dataFieldUpDown = 20;
     private int tableNumber = 0;
-    private VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
-    public Table() {
+
+    private final String tableGuiName;
+
+    public Table(VisualEngine gui, String tableGuiName) {
+        this.tableGuiName = tableGuiName;
+        this.gui = gui;
         this.dataFields = new ArrayList();
 
         // table gui
@@ -85,10 +91,6 @@ public class Table extends JPanel {
         });
     }
 
-    public void setGui(VisualEngine gui) {
-        this.gui = gui;
-    }
-
     public void addDataField() {
         dataFields.add(new VisualDataField(this));
     }
@@ -98,7 +100,7 @@ public class Table extends JPanel {
     }
 
     // when field gets added or something
-    public void generateGui() {
+    private void generateGui() {
         this.fieldPanel.removeAll();
 
         int i = 0;
@@ -107,13 +109,13 @@ public class Table extends JPanel {
             dataField.setBounds(i * dataFieldLength + dataFieldLeftRightMargin, dataFieldUpDown, 100, dataFieldHeight);
 
             i++;
-            dataField.SetDataFieldNumber(tableNumber,i);
+            dataField.setDataFieldNumber(tableNumber,i);
         }
 
         this.fieldPanel.add(addFieldButton);
 
         setAddButtonPosition();
-        sescaleTable();
+        scaleTable();
         gui.setCanvasSize(); // kinda unoptimized to update the entire gui everytime something gets added but this program is small enough that it shouldn't matter
         this.repaint();
         this.revalidate();
@@ -125,14 +127,14 @@ public class Table extends JPanel {
         this.revalidate();
     }
 
-    public void sescaleTable() {
+    public void scaleTable() {
         this.setBounds(this.getBounds().x, this.getBounds().y, Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1)) + dataFieldLeftRightMargin*2, tableHeight);
         this.fieldPanel.setBounds(00, 70-dataFieldUpDown, Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1)) + dataFieldLeftRightMargin*2, dataFieldHeight + 2*dataFieldUpDown);
         this.repaint();
         this.revalidate();
     }
 
-    public int setLenght() {
+    public int setLength() {
         return Math.max(minTableLength, dataFieldLength * (dataFields.size() + 1));
     }
 
@@ -163,10 +165,14 @@ public class Table extends JPanel {
         } catch (Exception e){
             //TODO: Print error message
         }
-        return 0;
+        return -1;
     }
 
     public String getTableName(){
         return tableName.getText();
+    }
+
+    public String getTableGuiName() {
+        return tableGuiName;
     }
 }

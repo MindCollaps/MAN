@@ -1,6 +1,8 @@
 package gui.settingsPage.pageField;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 
 /**
  * This class is a field in the settings page and manages the user input
@@ -14,16 +16,23 @@ public class PageField<T extends Component> {
     private final PageFieldAction action;
     private final DefaultValueSetter setter;
 
-    /**
-     * @param fieldName The name of the field that can be given a data
-     * @param component The component where the data can be input
-     */
+
     public PageField(String fieldName, T component, PageFieldGrabber<T> grabber, PageFieldAction<T> action, DefaultValueSetter<T> setter) {
         this.action = action;
         this.fieldName = fieldName;
         this.component = component;
         this.grabber = grabber;
         this.setter = setter;
+    }
+
+    public PageField(String fieldName, JButton component, MouseListener listener) {
+        this.fieldName = fieldName;
+        this.component = (T) component;
+        component.addMouseListener(listener);
+
+        grabber = null;
+        action = null;
+        setter = null;
     }
 
     public PageFieldAction getAction() {

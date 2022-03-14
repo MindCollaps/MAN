@@ -30,20 +30,21 @@ public class VisualEngine extends JFrame {
     private final int tableMargin = 230;
     private final int tableMarginLenght = 230;
     // ui text, only visual
-    private final ArrayList<JTextArea> tableName_text = new ArrayList<JTextArea>();
+    private final ArrayList<JLabel> tableName_text = new ArrayList<JLabel>();
     private JButton addTableButton;
     private JScrollPane scrollPane;
     private JPanel canvas; // tables will be displayed on the canvas,
     private JButton generateButton;
     private JPanel contentPanel;
     private JPanel bottomPanel;
-    //Settings page
-    private JDialog settingsPage;
 
     //Generator stuff
     private GeneratorSession session;
 
+    private ArrayList<JDialog> settingPages;
+
     public VisualEngine() {
+        settingPages = new ArrayList<>();
         loadGeneratorFields();
         System.out.println("Loaded " + generatorDataFields.length + " generator Field Classes!");
         buildGui();
@@ -82,12 +83,13 @@ public class VisualEngine extends JFrame {
 
 
         Frame frame = this;
+        VisualEngine engine = this;
         this.addTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                String tableGuiName = "Table " + tables.size();
                 canvas.remove(addTableButton);
-                Table newTable = new Table();
-                addGUIReferenceToTable(newTable);
+                Table newTable = new Table(engine, tableGuiName);
 
                 canvas.add(newTable);
                 newTable.setPosition(tableMargin * tables.size() + 50);
@@ -95,9 +97,8 @@ public class VisualEngine extends JFrame {
                 tables.add(newTable);
 
                 // table text
-                JTextArea newText = new JTextArea("Table " + tables.size());
-                newTable.SetTableNumber(tables.size()); 
-                newText.setEditable(false);
+                JLabel newText = new JLabel(tableGuiName);
+                newTable.SetTableNumber(tables.size());
                 newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
                 tableName_text.add(newText);
                 canvas.add(newText);
@@ -168,7 +169,7 @@ public class VisualEngine extends JFrame {
         setAddTableButtonPosition(tableMargin * tables.size() + 50);
         int longestTable = 0; // amount of datafields in the biggest Table, used for scaling and stuff
         for (Table t : tables) {
-            longestTable = Math.max(longestTable, t.setLenght());
+            longestTable = Math.max(longestTable, t.setLength());
         }
         canvas.setSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
     }
@@ -188,29 +189,27 @@ public class VisualEngine extends JFrame {
         }
     }
 
-    public void addGUIReferenceToTable(Table table) {
-        table.setGui(this);
-    }
-
     private void setAddTableButtonPosition(int position) {
         this.addTableButton.setBounds(50, position, 100, 100);
     }
 
     public void openSettings(SettingsPage page, VisualDataField field, Table table) {
         if (page != null && field != null && table != null) {
-            settingsPage = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            JDialog settingsPage = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            this.settingPages.add(settingsPage);
             settingsPage.setContentPane(page);
             settingsPage.setBounds(100, 100, page.getWidth(), page.getHeight());
             settingsPage.repaint();
             settingsPage.revalidate();
             settingsPage.setVisible(true);
+
         } else
             System.err.println("Can't open settings, because one of the values is null!");
     }
 
     public void closeSettings() {
-        if (this.settingsPage != null) {
-            this.settingsPage.dispose();
+        if (this.settingPages.size() != 0) {
+            this.settingPages.get(this.settingPages.size() -1).dispose();
         }
     }
 

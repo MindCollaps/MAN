@@ -11,10 +11,12 @@ public class DataFieldData {
     private final String dataFieldName;
     private final FieldData[] fieldData;
     private final DataType dataType;
+    private final String guiName;
 
     public DataFieldData(GeneratorSession session, VisualDataField field, int amount) {
         this.dataFieldName = field.getFieldName();
         this.dataType = field.getDataField().getDataType();
+        this.guiName = field.getDataFieldNumber();
 
         fieldData = new FieldData[amount];
         for (int i = 0; i < amount; i++) {
@@ -32,6 +34,10 @@ public class DataFieldData {
 
     public String getDataFieldName() {
         return dataFieldName;
+    }
+
+    public String getGuiName() {
+        return guiName;
     }
 
     @Override

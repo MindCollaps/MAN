@@ -21,7 +21,7 @@ public class SettingsPage extends JPanel {
     private final JButton saveButton;
 
     private final int width = 400;
-    private final int heightPerField = 80;
+    private final int heightPerField = 40;
 
     private final VisualDataField field;
 
@@ -36,7 +36,7 @@ public class SettingsPage extends JPanel {
         this.settingsNameLabel = new Label(settingsName);
         this.add(this.settingsNameLabel);
 
-        int height = 10;
+        int height = 60;
 
         for (PageField field : fields) {
             height += heightPerField;

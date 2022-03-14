@@ -25,13 +25,15 @@ public class VisualDataField extends JPanel {
     private DataField dataField;
 
     // ui values
-    public int upMargin=20;
+    public int upMargin = 20;
 
-    public void SetDataFieldNumber(int table, int field)
-    {
+    private String dataFieldNumber;
+
+    public void setDataFieldNumber(int table, int field) {
         //panelNumber.setText("Data field "+ i);
         //panelNumber.setText("");
-        panelNumber.setText(table+"."+field);
+        this.dataFieldNumber = table + "." + field;
+        panelNumber.setText(this.dataFieldNumber);
     }
 
     public VisualDataField(Table table) {
@@ -46,10 +48,10 @@ public class VisualDataField extends JPanel {
         this.name.setBounds(0, upMargin, 100, 50);
         this.setBackground(Color.white);
         this.comboBox = new JComboBox<>(VisualEngine.generatorDataFieldsString);
-        this.comboBox.setBounds(0, 50 +upMargin, 60, 40);
+        this.comboBox.setBounds(0, 50 + upMargin, 60, 40);
 
         this.options = new JButton(icon); // text will be replaced with picture
-        this.options.setBounds(60, 50+upMargin, 40, 40);
+        this.options.setBounds(60, 50 + upMargin, 40, 40);
         this.options.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -101,7 +103,11 @@ public class VisualDataField extends JPanel {
         return dataField;
     }
 
-    public String getFieldName(){
+    public String getFieldName() {
         return name.getText();
+    }
+
+    public String getDataFieldNumber() {
+        return dataFieldNumber;
     }
 }
