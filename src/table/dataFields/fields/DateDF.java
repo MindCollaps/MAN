@@ -2,12 +2,12 @@ package table.dataFields.fields;
 
 import generator.FieldData;
 import generator.GeneratorSession;
-import gui.settingsPage.pageField.PageFieldAction;
-import gui.settingsPage.SettingsPage;
-import gui.settingsPage.VisualDataField;
-import gui.settingsPage.pageField.DefaultValueSetter;
-import gui.settingsPage.pageField.PageField;
-import gui.settingsPage.pageField.PageFieldGrabber;
+import gui.pages.settingsPage.pageField.PageFieldAction;
+import gui.pages.settingsPage.SettingsPage;
+import gui.pages.settingsPage.VisualDataField;
+import gui.pages.settingsPage.pageField.DefaultValueSetter;
+import gui.pages.settingsPage.pageField.PageField;
+import gui.pages.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
 

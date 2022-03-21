@@ -1,8 +1,9 @@
 package gui;
 
 import generator.GeneratorSession;
-import gui.settingsPage.SettingsPage;
-import gui.settingsPage.VisualDataField;
+import gui.pages.generatorPage.GeneratorPage;
+import gui.pages.settingsPage.SettingsPage;
+import gui.pages.settingsPage.VisualDataField;
 import table.Table;
 import table.dataFields.DataField;
 import table.dataFields.fields.DateDF;
@@ -37,6 +38,14 @@ public class VisualEngine extends JFrame {
     private JButton generateButton;
     private JPanel contentPanel;
     private JPanel bottomPanel;
+
+    // bottomPanel
+    private JCheckBox generate_tables;
+    private JCheckBox generate_inserts;
+    private JButton printText;
+    private JButton saveText;
+    private JLabel generate_tables_text;
+    private JLabel generate_insert_text;
 
     //Generator stuff
     private GeneratorSession session;
@@ -119,8 +128,41 @@ public class VisualEngine extends JFrame {
 
         bottomPanel = new JPanel();
         BoxLayout bottomLayout = new BoxLayout(bottomPanel, BoxLayout.X_AXIS);
-        bottomPanel.setLayout(bottomLayout);
-        bottomPanel.add(generateButton);
+        //bottomPanel.setLayout(bottomLayout);
+        bottomPanel.setLayout(null);
+        //bottomPanel.add(generateButton);
+        // bottomPannel stuff
+        int marginY = 0;
+        int marginX = 20;
+
+        generate_tables = new JCheckBox();
+        generate_tables.setBounds(marginX,marginY,30,30);
+        bottomPanel.add(generate_tables);
+
+        generate_inserts = new JCheckBox();
+        generate_inserts.setBounds(marginX,marginY+30,30,30);
+        bottomPanel.add(generate_inserts);
+
+        generate_tables_text = new JLabel("create generate_tables");
+        generate_tables_text.setBounds(marginX + 30,marginY,1000,30);
+        bottomPanel.add(generate_tables_text);
+
+        generate_insert_text = new JLabel("create generate_inserts");
+        generate_insert_text.setBounds(marginX + 30,marginY+30,1000,30);
+        bottomPanel.add(generate_insert_text);
+
+        printText = new JButton("Print Text");
+        printText.setBounds(marginX,marginY+30*2 ,100,40);
+        bottomPanel.add(printText);
+
+
+        saveText = new JButton("Save Text");
+        saveText.setBounds(marginX +120,marginY+30*2,100,40);
+        bottomPanel.add(saveText);
+
+        // bottomPannel stuff end
+
+
         bottomPanel.setVisible(true);
 
         contentPanel = new JPanel();
@@ -128,6 +170,7 @@ public class VisualEngine extends JFrame {
         contentPanel.add(scrollPane);
         contentPanel.add(bottomPanel);
         contentPanel.setVisible(true);
+
 
         this.add(contentPanel);
 
@@ -141,6 +184,8 @@ public class VisualEngine extends JFrame {
 
         this.setVisible(true);
         setContentSize();
+
+
     }
 
     private void setContentSize() {
@@ -214,8 +259,17 @@ public class VisualEngine extends JFrame {
     }
 
     public void generateData() {
+
         if (this.tables != null)
             if (this.tables.size() > 0)
                 session = new GeneratorSession(this.tables.toArray(new Table[]{}));
+
+        GeneratorPage page = new GeneratorPage(session);
+        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setContentPane(page);
+        dialog.setBounds(100, 100, page.getWidth(), page.getHeight());
+        dialog.repaint();
+        dialog.revalidate();
+        dialog.setVisible(true);
     }
 }

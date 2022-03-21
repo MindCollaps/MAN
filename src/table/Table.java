@@ -1,8 +1,8 @@
 package table;
 
 import gui.VisualEngine;
-import gui.settingsPage.SettingsPage;
-import gui.settingsPage.VisualDataField;
+import gui.pages.settingsPage.SettingsPage;
+import gui.pages.settingsPage.VisualDataField;
 
 import javax.swing.*;
 import java.awt.*;

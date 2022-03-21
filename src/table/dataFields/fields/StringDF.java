@@ -1,21 +1,18 @@
 package table.dataFields.fields;
 
 import generator.GeneratorSession;
-import gui.settingsPage.pageField.PageFieldAction;
-import gui.settingsPage.SettingsPage;
-import gui.settingsPage.VisualDataField;
-import gui.settingsPage.pageField.DefaultValueSetter;
-import gui.settingsPage.pageField.PageField;
-import gui.settingsPage.pageField.PageFieldGrabber;
+import gui.pages.settingsPage.pageField.PageFieldAction;
+import gui.pages.settingsPage.SettingsPage;
+import gui.pages.settingsPage.VisualDataField;
+import gui.pages.settingsPage.pageField.DefaultValueSetter;
+import gui.pages.settingsPage.pageField.PageField;
+import gui.pages.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
 import generator.FieldData;
 
 import javax.swing.*;
-import java.nio.charset.Charset;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.random.RandomGenerator;
 
 public class StringDF extends DataField {
 

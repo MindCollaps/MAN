@@ -1,6 +1,6 @@
-package gui.settingsPage;
+package gui.pages.settingsPage;
 
-import gui.settingsPage.pageField.PageField;
+import gui.pages.settingsPage.pageField.PageField;
 
 import javax.swing.*;
 import java.awt.*;

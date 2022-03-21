@@ -1,4 +1,4 @@
-package gui.settingsPage;
+package gui.pages.settingsPage;
 
 import gui.VisualEngine;
 import table.Table;

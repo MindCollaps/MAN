@@ -1,7 +1,6 @@
 package generator;
 
-import gui.settingsPage.VisualDataField;
-import table.dataFields.DataField;
+import gui.pages.settingsPage.VisualDataField;
 import table.dataFields.DataType;
 
 import java.util.Arrays;
