@@ -57,6 +57,7 @@ public class VisualEngine extends JFrame {
         loadGeneratorFields();
         System.out.println("Loaded " + generatorDataFields.length + " generator Field Classes!");
         buildGui();
+
     }
 
     private void buildGui() {
