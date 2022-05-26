@@ -8,5 +8,5 @@ import java.awt.*;
  */
 public interface PageFieldAction<T extends Component> {
 
-    public void onSave(PageField<T> pageField);
+    void onSave(PageField<T> pageField);
 }

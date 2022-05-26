@@ -2,11 +2,11 @@ package table.dataFields.fields;
 
 import generator.FieldData;
 import generator.GeneratorSession;
-import gui.pages.settingsPage.pageField.PageFieldAction;
 import gui.pages.settingsPage.SettingsPage;
 import gui.pages.settingsPage.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
+import gui.pages.settingsPage.pageField.PageFieldAction;
 import gui.pages.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;

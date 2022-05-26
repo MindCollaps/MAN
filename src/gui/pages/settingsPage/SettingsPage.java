@@ -36,7 +36,7 @@ public class SettingsPage extends JPanel {
         this.settingsNameLabel = new Label(settingsName);
         this.add(this.settingsNameLabel);
 
-        int height = 60;
+        int height = 75;
 
         for (PageField field : fields) {
             height += heightPerField;
@@ -92,6 +92,10 @@ public class SettingsPage extends JPanel {
 
     public String getSettingsNameLabel() {
         return settingsName;
+    }
+
+    public ArrayList<PageField> getFields() {
+        return fields;
     }
 
     public void closeSettings() {

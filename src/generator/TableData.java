@@ -1,7 +1,10 @@
 package generator;
 
+import gui.pages.settingsPage.SettingsPage;
 import gui.pages.settingsPage.VisualDataField;
 import table.Table;
+import table.dataFields.DataField;
+import table.dataFields.DataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,12 +12,14 @@ import java.util.Comparator;
 
 public class TableData {
 
-    private ArrayList<String> errors;
+    private final ArrayList<String> errors;
 
     private final String tableName;
     private final DataFieldData[] dataFieldData;
 
     private final String guiName;
+
+    private final String primaryKeyName;
 
     public TableData(GeneratorSession session, Table table) {
         this.errors = new ArrayList<>();
@@ -33,7 +38,17 @@ public class TableData {
 
         this.tableName = table.getTableName();
 
-        dataFieldData = new DataFieldData[table.getDataFields().size()];
+        if(table.getPrimaryKeyName() == null){
+            this.primaryKeyName = tableName + "ID";
+        } else {
+            this.primaryKeyName = table.getPrimaryKeyName();
+        }
+
+        if(!this.primaryKeyName.toLowerCase().endsWith("id")){
+            errors.add("WARNING! Table " + table.getTableGuiName() + " has no valid primary key name {" + this.primaryKeyName + "} Primary keys should end with ID!");
+        }
+
+        dataFieldData = new DataFieldData[table.getDataFields().size()+1];
 
         table.getDataFields().sort(new Comparator<VisualDataField>() {
             @Override
@@ -45,16 +60,59 @@ public class TableData {
             }
         });
 
+        VisualDataField primaryKey = new VisualDataField(table){
+            private int lastNumber = 0;
+
+            @Override
+            public String getFieldName() {
+                return primaryKeyName;
+            }
+
+            @Override
+            public DataField getDataField() {
+                return new DataField() {
+                    @Override
+                    public int getPriority() {
+                        return 0;
+                    }
+
+                    @Override
+                    public FieldData getData(GeneratorSession session) {
+                        lastNumber++;
+                        return new FieldData(String.valueOf(lastNumber));
+                    }
+
+                    @Override
+                    public SettingsPage getSettingsPage(VisualDataField field) {
+                        return null;
+                    }
+
+                    @Override
+                    public DataType getDataType() {
+                        return DataType.PrimaryKey;
+                    }
+
+                    @Override
+                    public String getFieldName() {
+                        return "PK";
+                    }
+                };
+
+
+            }
+        };
+
+        dataFieldData[0] = new DataFieldData(session, primaryKey, table.getTableCount());
+
         for (int i = 0; i < table.getDataFields().size(); i++) {
             VisualDataField dataField = table.getDataFields().get(i);
 
             if (dataField.getFieldName().length() == 0) {
-                errors.add("DataField" + dataField.getDataFieldNumber() + " in " + table.getTableGuiName() + " has no valid field name!");
+                errors.add("DataField " + dataField.getDataFieldNumber() + " in " + table.getTableGuiName() + " has no valid field name!");
                 session.noticedError();
             }
 
-
-            dataFieldData[i] = new DataFieldData(session, dataField, table.getTableCount());
+            dataFieldData[i+1] = new DataFieldData(session, dataField, table.getTableCount());
         }
 
         for (int i = 0; i < dataFieldData.length; i++) {

@@ -3,10 +3,10 @@ package gui;
 import generator.GeneratorSession;
 import gui.pages.generatorPage.GeneratorPage;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
 import table.Table;
 import table.dataFields.DataField;
 import table.dataFields.fields.DateDF;
+import table.dataFields.fields.ForeignKeyDF;
 import table.dataFields.fields.IntegerDF;
 import table.dataFields.fields.StringDF;
 
@@ -22,6 +22,7 @@ public class VisualEngine extends JFrame {
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
     private final ArrayList<Table> tables = new ArrayList<Table>();
+    private final ArrayList<JLabel> tableLabels = new ArrayList<>();
     // ui values
     private final int canvasMarginSide = 20;
     private final int canvasMarginTop = 20;
@@ -39,18 +40,10 @@ public class VisualEngine extends JFrame {
     private JPanel contentPanel;
     private JPanel bottomPanel;
 
-    // bottomPanel
-    private JCheckBox generate_tables;
-    private JCheckBox generate_inserts;
-    private JButton printText;
-    private JButton saveText;
-    private JLabel generate_tables_text;
-    private JLabel generate_insert_text;
-
     //Generator stuff
     private GeneratorSession session;
 
-    private ArrayList<JDialog> settingPages;
+    private final ArrayList<JDialog> settingPages;
 
     public VisualEngine() {
         settingPages = new ArrayList<>();
@@ -97,25 +90,7 @@ public class VisualEngine extends JFrame {
         this.addTableButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                String tableGuiName = "Table " + tables.size();
-                canvas.remove(addTableButton);
-                Table newTable = new Table(engine, tableGuiName);
-
-                canvas.add(newTable);
-                newTable.setPosition(tableMargin * tables.size() + 50);
-
-                tables.add(newTable);
-
-                // table text
-                JLabel newText = new JLabel(tableGuiName);
-                newTable.SetTableNumber(tables.size());
-                newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
-                tableName_text.add(newText);
-                canvas.add(newText);
-                // table text end
-
-                canvas.add(addTableButton);
-                setContentSize();
+               addTable();
             }
         });
 
@@ -136,31 +111,7 @@ public class VisualEngine extends JFrame {
         int marginY = 0;
         int marginX = 20;
 
-        generate_tables = new JCheckBox();
-        generate_tables.setBounds(marginX,marginY,30,30);
-        bottomPanel.add(generate_tables);
-
-        generate_inserts = new JCheckBox();
-        generate_inserts.setBounds(marginX,marginY+30,30,30);
-        bottomPanel.add(generate_inserts);
-
-        generate_tables_text = new JLabel("create generate_tables");
-        generate_tables_text.setBounds(marginX + 30,marginY,1000,30);
-        bottomPanel.add(generate_tables_text);
-
-        generate_insert_text = new JLabel("create generate_inserts");
-        generate_insert_text.setBounds(marginX + 30,marginY+30,1000,30);
-        bottomPanel.add(generate_insert_text);
-
-        printText = new JButton("Print Text");
-        printText.setBounds(marginX,marginY+30*2 ,100,40);
-        bottomPanel.add(printText);
-
-
-        saveText = new JButton("Save Text");
-        saveText.setBounds(marginX +120,marginY+30*2,100,40);
-        bottomPanel.add(saveText);
-
+        this.bottomPanel.add(this.generateButton);
         // bottomPannel stuff end
 
 
@@ -187,6 +138,56 @@ public class VisualEngine extends JFrame {
         setContentSize();
 
 
+    }
+
+    public void addTable(){
+        String tableGuiName = "Table " + tables.size();
+        canvas.remove(addTableButton);
+        Table newTable = new Table(this, tableGuiName);
+
+        canvas.add(newTable);
+        newTable.setPosition(tableMargin * tables.size() + 50);
+
+        tables.add(newTable);
+
+        // table text
+        JLabel newText = new JLabel(tableGuiName);
+        newTable.setTableNumber(tables.size()-1);
+        newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
+        tableName_text.add(newText);
+        canvas.add(newText);
+        tableLabels.add(newText);
+        // table text end
+
+        canvas.add(addTableButton);
+        setContentSize();
+    }
+
+    public void removeTable(Table thisTable) {
+        canvas.remove(addTableButton);
+        canvas.remove(thisTable);
+
+        for (int i = 0; i < tables.size(); i++) {
+            if(tables.get(i) == thisTable){
+                tables.remove(i);
+                canvas.remove(tableLabels.get(i));
+                tableLabels.remove(i);
+                break;
+            }
+        }
+
+        reSortTables();
+        canvas.add(addTableButton);
+        setContentSize();
+    }
+
+    public void reSortTables(){
+        for (int i = 0; i < tables.size(); i++) {
+            tables.get(i).setTableNumber(i);
+            tables.get(i).setPosition(tableMargin * i + 50);
+            tableLabels.get(i).setText("Table " + i);
+            tableLabels.get(i).setBounds(50, (tableMargin * (i+1)) - tableMargin + 30, 50, 20);
+        }
     }
 
     private void setContentSize() {
@@ -224,14 +225,14 @@ public class VisualEngine extends JFrame {
         generatorDataFields = new DataField[]{
                 new StringDF(),
                 new IntegerDF(),
-                new DateDF()
+                new DateDF(),
+                new ForeignKeyDF()
         };
 
         generatorDataFieldsString = new String[generatorDataFields.length];
 
         for (int i = 0; i < generatorDataFields.length; i++) {
             generatorDataFieldsString[i] = generatorDataFields[i].getFieldName();
-
         }
     }
 
@@ -239,9 +240,10 @@ public class VisualEngine extends JFrame {
         this.addTableButton.setBounds(50, position, 100, 100);
     }
 
-    public void openSettings(SettingsPage page, VisualDataField field, Table table) {
-        if (page != null && field != null && table != null) {
+    public void openSettings(SettingsPage page) {
+        if (page != null) {
             JDialog settingsPage = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            settingsPage.setResizable(false);
             this.settingPages.add(settingsPage);
             settingsPage.setContentPane(page);
             settingsPage.setBounds(100, 100, page.getWidth(), page.getHeight());
@@ -260,17 +262,21 @@ public class VisualEngine extends JFrame {
     }
 
     public void generateData() {
-
         if (this.tables != null)
-            if (this.tables.size() > 0)
+            if (this.tables.size() > 0){
                 session = new GeneratorSession(this.tables.toArray(new Table[]{}));
 
-        GeneratorPage page = new GeneratorPage(session);
-        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setContentPane(page);
-        dialog.setBounds(100, 100, page.getWidth(), page.getHeight());
-        dialog.repaint();
-        dialog.revalidate();
-        dialog.setVisible(true);
+                GeneratorPage page = new GeneratorPage(session);
+                JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setContentPane(page);
+                dialog.setBounds(100, 100, page.getWidth(), page.getHeight());
+                dialog.repaint();
+                dialog.revalidate();
+                dialog.setVisible(true);
+            }
+    }
+
+    public ArrayList<Table> getTables() {
+        return tables;
     }
 }

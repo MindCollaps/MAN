@@ -3,6 +3,7 @@ package generator;
 import table.Table;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The generator session handles anything that is related to generating data and SQL statements
@@ -13,7 +14,7 @@ public class GeneratorSession {
 
     private ArrayList<String> errors;
 
-    private Table[] tables;
+    private final Table[] tables;
 
     private TableData[] tableData;
 
@@ -29,18 +30,18 @@ public class GeneratorSession {
         tableData = new TableData[tables.length];
         for (int i = 0; i < tables.length; i++) {
             tableData[i] = new TableData(this, tables[i]);
-            if(tableData[i].getErrors().size() != 0)
+            if (tableData[i].getErrors().size() != 0)
                 errors.addAll(tableData[i].getErrors());
         }
 
         for (int i = 0; i < tableData.length; i++) {
-            if(tableData[i].getTableName().length() == 0)
+            if (tableData[i].getTableName().length() == 0)
                 continue;
 
-            for (int j = i+1; j < tableData.length; j++) {
-                if(tableData[j].getTableName().length() == 0)
+            for (int j = i + 1; j < tableData.length; j++) {
+                if (tableData[j].getTableName().length() == 0)
                     continue;
-                if(tableData[i].getTableName().equals(tableData[j].getTableName())){
+                if (tableData[i].getTableName().equals(tableData[j].getTableName())) {
                     errors.add(tableData[i].getGuiName() + " has the same name as " + tableData[j].getGuiName());
                 }
             }
@@ -51,9 +52,7 @@ public class GeneratorSession {
         }
 
         System.out.println("Errors: ");
-        for (String error : errors) {
-            System.out.println(error);
-        }
+        System.out.println(getErrors());
     }
 
     public String getInsert() {
@@ -61,7 +60,7 @@ public class GeneratorSession {
         for (int i = 0; i < tableData.length; i++) {
             TableData data = tableData[i];
             //Skip if nothing was created
-            if(data.getDataFieldData().length == 0)
+            if (data.getDataFieldData().length == 0)
                 continue;
 
             builder.append(data.getInsertString());
@@ -81,11 +80,27 @@ public class GeneratorSession {
         return builder.toString();
     }
 
-    public void noticedError(){
-        hasErrors= true;
+    public void noticedError() {
+        hasErrors = true;
     }
 
     public boolean hasErrors() {
         return hasErrors;
+    }
+
+    public TableData[] getTableData() {
+        return Arrays.copyOf(tableData, tableData.length);
+    }
+
+    public Table[] getTables() {
+        return Arrays.copyOf(tables, tables.length);
+    }
+
+    public String getErrors() {
+        StringBuilder builder = new StringBuilder();
+        for (String error : errors) {
+            builder.append(error).append("\n");
+        }
+        return builder.toString();
     }
 }

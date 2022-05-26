@@ -17,6 +17,10 @@ public class DataFieldData {
         this.dataType = field.getDataField().getDataType();
         this.guiName = field.getDataFieldNumber();
 
+        if(amount == -1){
+            fieldData = new FieldData[0];
+            return;
+        }
         fieldData = new FieldData[amount];
         for (int i = 0; i < amount; i++) {
             fieldData[i] = field.getDataField().getData(session);

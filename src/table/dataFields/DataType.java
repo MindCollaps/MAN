@@ -5,6 +5,8 @@ public enum DataType {
     String("varchar(255)", false),
     Number("int", true),
     Boolean("boolean", true),
+    PrimaryKey("int", true),
+    ForeignKey("int", true),
     Date("datetime", false);
 
     private final String sqlIndicator;
