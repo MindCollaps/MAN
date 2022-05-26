@@ -22,10 +22,16 @@ public class StringDF extends DataField {
     public static final String alphanum = upper + lower + digits;
 
     //Settings
-    private boolean isName = false;
+    private String[] typeValues = {"random", "name", "animal", "city", "country"};
+    private String type = typeValues[0];
     private int length = 10;
 
-    private String[] vornamen = {"Noah", "Elias"};
+    //lists
+    private String[] name = {"Noah", "Elias"};
+    private String[] surname = {};
+    private String[] animals = {};
+    private String[] citys = {};
+    private String[] countrys = {};
 
     @Override
     public int getPriority() {
@@ -34,33 +40,47 @@ public class StringDF extends DataField {
 
     @Override
     public FieldData getData(GeneratorSession session) {
-        if(isName){
-            return new FieldData(vornamen[ThreadLocalRandom.current().nextInt(0, vornamen.length)]);
-        } else {
+        switch (type){
+            default:
+            case "random":
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < length; i++) {
                 sb.append(alphanum.charAt(ThreadLocalRandom.current().nextInt(0, alphanum.length())));
             }
             return new FieldData(sb.toString());
+
+            case "name":
+                return new FieldData(name[ThreadLocalRandom.current().nextInt(0, name.length)]);
+
+            case "animal":
+                return new FieldData("Hund");
+                //TODO: make random
+
+            case "city":
+                return new FieldData("Ohio");
+                //TODO: make random
+
+            case "country":
+                return new FieldData("Amerika");
+                //TODO: make random
         }
     }
 
     @Override
     public SettingsPage getSettingsPage(VisualDataField field) {
-        PageField<JCheckBox> isNameField = new PageField<>("Is Name Field", new JCheckBox(), new PageFieldGrabber<JCheckBox>() {
+        PageField<JComboBox<String>> type = new PageField<>("Generator type", new JComboBox<String>(typeValues), new PageFieldGrabber<JComboBox<String>>() {
             @Override
-            public boolean getBoolean(PageField<JCheckBox> page, JCheckBox jCheckBox) {
-                return jCheckBox.isSelected();
+            public String getDataString(PageField<JComboBox<String>> page, JComboBox<String> jCheckBox) {
+                return typeValues[jCheckBox.getSelectedIndex()];
             }
-        }, new PageFieldAction() {
+        }, new PageFieldAction<JComboBox<String>>() {
             @Override
-            public void onSave(PageField pageField) {
-                isName = pageField.getBoolean();
+            public void onSave(PageField<JComboBox<String>> pageField) {
+                StringDF.this.type = pageField.getDataString();
             }
-        }, new DefaultValueSetter<JCheckBox>() {
+        }, new DefaultValueSetter<JComboBox<String>>() {
             @Override
-            public void setDefaultData(JCheckBox component) {
-                component.setSelected(isName);
+            public void setDefaultData(JComboBox<String> component) {
             }
         });
 
@@ -95,7 +115,7 @@ public class StringDF extends DataField {
             }
         });
 
-        return new SettingsPage("String Field Settings", field, lengthField, isNameField);
+        return new SettingsPage("String Field Settings", field, type, lengthField);
     }
 
     @Override
