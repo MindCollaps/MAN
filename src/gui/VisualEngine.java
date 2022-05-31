@@ -23,6 +23,7 @@ public class VisualEngine extends JFrame {
     public static String[] generatorDataFieldsString;
     private final ArrayList<Table> tables = new ArrayList<Table>();
     private final ArrayList<JLabel> tableLabels = new ArrayList<>();
+    private final ArrayList<JLabel> tableCountLabels = new ArrayList<>();
     // ui values
     private final int canvasMarginSide = 20;
     private final int canvasMarginTop = 20;
@@ -33,6 +34,7 @@ public class VisualEngine extends JFrame {
     private final int tableMarginLenght = 230;
     // ui text, only visual
     private final ArrayList<JLabel> tableName_text = new ArrayList<JLabel>();
+    private final ArrayList<JLabel> tableCount_text = new ArrayList<JLabel>();
     private JButton addTableButton;
     private JScrollPane scrollPane;
     private JPanel canvas; // tables will be displayed on the canvas,
@@ -157,6 +159,17 @@ public class VisualEngine extends JFrame {
         tableName_text.add(newText);
         canvas.add(newText);
         tableLabels.add(newText);
+
+
+        // count text
+        JLabel newCount = new JLabel("Count");
+        newTable.setTableNumber(tables.size()-1);
+        newCount.setBounds(150, (tableMargin * tables.size()) - tableMargin + 30, 150, 20);
+        tableName_text.add(newCount);
+        canvas.add(newCount);
+        tableCountLabels.add(newCount);
+
+
         // table text end
 
         canvas.add(addTableButton);
@@ -171,7 +184,10 @@ public class VisualEngine extends JFrame {
             if(tables.get(i) == thisTable){
                 tables.remove(i);
                 canvas.remove(tableLabels.get(i));
+                canvas.remove(tableCountLabels.get(i));
+
                 tableLabels.remove(i);
+                tableCountLabels.remove(i);
                 break;
             }
         }
@@ -186,7 +202,10 @@ public class VisualEngine extends JFrame {
             tables.get(i).setTableNumber(i);
             tables.get(i).setPosition(tableMargin * i + 50);
             tableLabels.get(i).setText("Table " + i);
-            tableLabels.get(i).setBounds(50, (tableMargin * (i+1)) - tableMargin + 30, 50, 20);
+            tableLabels.get(i).setBounds(50, (tableMargin * (i+1)) - tableMargin +30, 50, 20);
+
+            tableCountLabels.get(i).setText("Table " + i);
+            tableCountLabels.get(i).setBounds(50, (tableMargin * (i+1)) - tableMargin +30, 50, 20);
         }
     }
 
@@ -199,6 +218,7 @@ public class VisualEngine extends JFrame {
         setBottomBarSize();
 
         this.repaint();
+        System.out.println(canvas.getHeight());
     }
 
     private void setBottomBarSize() {
@@ -209,16 +229,21 @@ public class VisualEngine extends JFrame {
     private void setCanvasBorders() {
         int x = this.getWidth();
         int y = this.getHeight();
-        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x - canvasMarginSide * 2, y - canvasMarginTop - canvasMarginBottom);
+        scrollPane.setBounds(canvasMarginSide, canvasMarginTop, x - canvasMarginSide * 2, y - canvasMarginTop - canvasMarginBottom );
+
     }
 
     public void setCanvasSize() {
+
         setAddTableButtonPosition(tableMargin * tables.size() + 50);
         int longestTable = 0; // amount of datafields in the biggest Table, used for scaling and stuff
         for (Table t : tables) {
             longestTable = Math.max(longestTable, t.setLength());
         }
-        canvas.setSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
+
+        canvas.setPreferredSize(new Dimension(Math.max(baseCanvasLenght, longestTable + tableMarginLenght), Math.max(baseCanvasHeight, tableMargin * (tables.size() + 1))));
+
+
     }
 
     private void loadGeneratorFields() {
