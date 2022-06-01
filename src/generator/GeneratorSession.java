@@ -18,6 +18,9 @@ public class GeneratorSession {
 
     private TableData[] tableData;
 
+    private Table currentTable;
+    private TableData currentTableData;
+
     public GeneratorSession(Table[] tables) {
         this.tables = tables;
         hasErrors = false;
@@ -30,9 +33,16 @@ public class GeneratorSession {
         tableData = new TableData[tables.length];
         for (int i = 0; i < tables.length; i++) {
             tableData[i] = new TableData(this, tables[i]);
+            currentTable = tables[i];
+            currentTableData = tableData[i];
+            tableData[i].gatherInformation();
+
             if (tableData[i].getErrors().size() != 0)
                 errors.addAll(tableData[i].getErrors());
         }
+
+        currentTable = null;
+        currentTableData = null;
 
         for (int i = 0; i < tableData.length; i++) {
             if (tableData[i].getTableName().length() == 0)
@@ -94,6 +104,14 @@ public class GeneratorSession {
 
     public Table[] getTables() {
         return Arrays.copyOf(tables, tables.length);
+    }
+
+    public Table getCurrentTable() {
+        return currentTable;
+    }
+
+    public TableData getCurrentTableData() {
+        return currentTableData;
     }
 
     public String getErrors() {

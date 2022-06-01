@@ -3,7 +3,6 @@ package table.dataFields;
 import generator.FieldData;
 import generator.GeneratorSession;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
 
 import javax.swing.*;
 
@@ -13,6 +12,15 @@ import javax.swing.*;
 public abstract class DataField {
 
     private JComboBox<String> comboBox;
+    protected int index;
+
+    public DataField(){
+        index = -1;
+    }
+
+    public DataField(int index) {
+        this.index = index;
+    }
 
     /**
      * Priority 0 is the highest value, everything higher than 0 will come after 0

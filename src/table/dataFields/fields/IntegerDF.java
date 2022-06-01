@@ -3,7 +3,7 @@ package table.dataFields.fields;
 import generator.FieldData;
 import generator.GeneratorSession;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
+import table.dataFields.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
@@ -59,7 +59,7 @@ public class IntegerDF extends DataField {
             }
         }, new DefaultValueSetter<JTextField>() {
             @Override
-            public void setDefaultData(JTextField component) {
+            public void setDefaultData(JTextField component, SettingsPage page) {
                 component.setText(String.valueOf(minInt));
             }
         });
@@ -90,12 +90,12 @@ public class IntegerDF extends DataField {
             }
         }, new DefaultValueSetter<JTextField>() {
             @Override
-            public void setDefaultData(JTextField component) {
+            public void setDefaultData(JTextField component, SettingsPage page) {
                 component.setText(String.valueOf(maxInt));
             }
         });
 
-        return new SettingsPage("Integer Field Settings", field, minIntField, maxIntField);
+        return new SettingsPage("Integer Field Settings", this, field, minIntField, maxIntField);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package generator;
 
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
+import table.dataFields.VisualDataField;
 import table.Table;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
@@ -12,20 +12,30 @@ import java.util.Comparator;
 
 public class TableData {
 
+    private final GeneratorSession session;
+
     private final ArrayList<String> errors;
 
-    private final String tableName;
-    private final DataFieldData[] dataFieldData;
+    private String tableName;
+    private DataFieldData[] dataFieldData;
 
     private final String guiName;
 
-    private final String primaryKeyName;
+    private String primaryKeyName;
+
+    private final Table table;
+
+    private DataFieldData currentDataFieldData;
 
     public TableData(GeneratorSession session, Table table) {
+        this.table = table;
         this.errors = new ArrayList<>();
+        this.session = session;
 
         guiName = table.getTableGuiName();
+    }
 
+    public void gatherInformation(){
         if (table.getTableName().length() == 0) {
             errors.add("Table " + table.getTableGuiName() + " has no valid name!");
             session.noticedError();
@@ -50,17 +60,18 @@ public class TableData {
 
         dataFieldData = new DataFieldData[table.getDataFields().size()+1];
 
+        //Sort
         table.getDataFields().sort(new Comparator<VisualDataField>() {
             @Override
             public int compare(VisualDataField o1, VisualDataField o2) {
-                if (o1.getDataField().getPriority() < o2.getDataField().getPriority())
+                if (o1.getDataField().getPriority() > o2.getDataField().getPriority())
                     return 1;
                 else
                     return -1;
             }
         });
 
-        VisualDataField primaryKey = new VisualDataField(table){
+        VisualDataField primaryKey = new VisualDataField(table, 0){
             private int lastNumber = 0;
 
             @Override
@@ -73,7 +84,7 @@ public class TableData {
                 return new DataField() {
                     @Override
                     public int getPriority() {
-                        return 0;
+                        return -1;
                     }
 
                     @Override
@@ -103,17 +114,22 @@ public class TableData {
         };
 
         dataFieldData[0] = new DataFieldData(session, primaryKey, table.getTableCount());
+        dataFieldData[0].gatherInformation();
 
         for (int i = 0; i < table.getDataFields().size(); i++) {
             VisualDataField dataField = table.getDataFields().get(i);
 
             if (dataField.getFieldName().length() == 0) {
-                errors.add("DataField " + dataField.getDataFieldNumber() + " in " + table.getTableGuiName() + " has no valid field name!");
+                errors.add("DataField " + dataField.getDataFieldString() + " in " + table.getTableGuiName() + " has no valid field name!");
                 session.noticedError();
             }
 
             dataFieldData[i+1] = new DataFieldData(session, dataField, table.getTableCount());
+            currentDataFieldData = dataFieldData[i+1];
+            dataFieldData[i+1].gatherInformation();
         }
+
+        currentDataFieldData = null;
 
         for (int i = 0; i < dataFieldData.length; i++) {
             if(dataFieldData[i].getDataFieldName().length() == 0)
@@ -187,6 +203,14 @@ public class TableData {
 
     public String getGuiName() {
         return guiName;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public DataFieldData getCurrentDataFieldData() {
+        return currentDataFieldData;
     }
 
     @Override

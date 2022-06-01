@@ -14,6 +14,10 @@ public record FieldData(String data) {
             return "'" + data + "'";
     }
 
+    public String getValuePlain(){
+        return data;
+    }
+
     @Override
     public String toString() {
         return "FieldData{" +

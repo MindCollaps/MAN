@@ -1,5 +1,7 @@
 package gui.pages.settingsPage.pageField;
 
+import gui.pages.settingsPage.SettingsPage;
+
 import java.awt.*;
 
 /**
@@ -8,5 +10,5 @@ import java.awt.*;
  */
 public interface DefaultValueSetter <T extends Component> {
 
-    void setDefaultData(T component);
+    void setDefaultData(T component, SettingsPage page);
 }

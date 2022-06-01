@@ -1,6 +1,8 @@
 package gui.pages.settingsPage;
 
 import gui.pages.settingsPage.pageField.PageField;
+import table.dataFields.DataField;
+import table.dataFields.VisualDataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,8 +27,11 @@ public class SettingsPage extends JPanel {
 
     private final VisualDataField field;
 
-    public SettingsPage(String settingsName, VisualDataField dataField, PageField ... fields) {
-        this.field = dataField;
+    private final DataField invoker;
+
+    public SettingsPage(String settingsName, DataField dField, VisualDataField vField, PageField ... fields) {
+        this.invoker = dField;
+        this.field = vField;
         this.settingsName = settingsName;
         this.fields = new ArrayList<>();
 
@@ -84,10 +89,17 @@ public class SettingsPage extends JPanel {
         panel.add(cancelButton);
 
         for (PageField field : this.fields) {
-            field.getSetter().setDefaultData(field.getComponent());
+            field.getSetter().setDefaultData(field.getComponent(), this);
         }
 
         this.add(panel);
+    }
+
+    public void reopen(){
+        if(invoker == null)
+            return;
+        closeSettings();
+        field.getTable().openSettings(invoker.getSettingsPage(field));
     }
 
     public String getSettingsNameLabel() {

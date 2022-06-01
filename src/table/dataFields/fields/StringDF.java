@@ -1,16 +1,17 @@
 package table.dataFields.fields;
 
 import dataset.StringDataSet;
+import generator.DataFieldData;
 import generator.FieldData;
 import generator.GeneratorSession;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
 import gui.pages.settingsPage.pageField.PageFieldGrabber;
 import table.dataFields.DataField;
 import table.dataFields.DataType;
+import table.dataFields.VisualDataField;
 
 import javax.swing.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,18 +24,36 @@ public class StringDF extends DataField {
     public static final String alphanum = upper + lower + digits;
 
     //Settings
-    private final String[] typeValues = {"random", "name", "surname", "animal", "city", "country"};
+    private final String[] typeValues = {"random", "Name", "Surname", "Animal", "City", "Country", "Username", "E-Mail"};
     private String type = typeValues[0];
-    private int length = 10;
+    private int length = 25;
+
+    public StringDF() {
+    }
+
+    public StringDF(int index) {
+        super(index);
+        switch (this.index) {
+            case 0 -> this.type = "Name";
+            case 1 -> this.type = "Surname";
+            case 2 -> this.type = "E-Mail";
+            case 4 -> this.type = "Country";
+            case 5 -> this.type = "City";
+            case 6 -> this.type = "Username";
+            case 7 -> this.type = "random";
+        }
+    }
 
     @Override
     public int getPriority() {
+        if (type.equals("E-Mail"))
+            return 1;
         return 0;
     }
 
     @Override
     public FieldData getData(GeneratorSession session) {
-        switch (type) {
+        switch (type.toLowerCase()) {
             default:
             case "random":
                 StringBuilder sb = new StringBuilder();
@@ -44,20 +63,53 @@ public class StringDF extends DataField {
                 return new FieldData(sb.toString());
 
             case "name":
-                return new FieldData(StringDataSet.names[ThreadLocalRandom.current().nextInt(0, StringDataSet.names.length - 1)]);
+                return new FieldData(randomString(StringDataSet.names));
 
             case "surname":
-                return new FieldData(StringDataSet.surname[ThreadLocalRandom.current().nextInt(0, StringDataSet.surname.length - 1)]);
+                return new FieldData(randomString(StringDataSet.surname));
 
             case "animal":
-                return new FieldData(StringDataSet.animals[ThreadLocalRandom.current().nextInt(0, StringDataSet.animals.length - 1)]);
+                return new FieldData(randomString(StringDataSet.animals));
 
             case "city":
-                return new FieldData(StringDataSet.cityNames[ThreadLocalRandom.current().nextInt(0, StringDataSet.cityNames.length - 1)]);
+                return new FieldData(randomString(StringDataSet.cityNames));
 
             case "country":
-                return new FieldData(StringDataSet.country[ThreadLocalRandom.current().nextInt(0, StringDataSet.country.length - 1)]);
+                return new FieldData(randomString(StringDataSet.country));
+
+            case "username":
+                return new FieldData(randomString(StringDataSet.pseudonyms));
+
+            case "e-mail":
+                String name = null;
+                String surname = null;
+                for (DataFieldData dataFieldDatum : session.getCurrentTableData().getDataFieldData()) {
+                    if (dataFieldDatum == null)
+                        continue;
+                    if (dataFieldDatum.getField().getDataField() instanceof StringDF) {
+                        StringDF df = (StringDF) dataFieldDatum.getField().getDataField();
+                        if (df.type.equalsIgnoreCase("name")) {
+                            name = dataFieldDatum.getFieldData()[session.getCurrentTableData().getCurrentDataFieldData().getCurrentIndex()].getValuePlain();
+                        } else if (df.type.equalsIgnoreCase("surname")) {
+                            surname = dataFieldDatum.getFieldData()[session.getCurrentTableData().getCurrentDataFieldData().getCurrentIndex()].getValuePlain();
+                        }
+                        if(name != null && surname != null)
+                            break;
+                    }
+                }
+                if(name == null && surname == null)
+                    return new FieldData(randomString(StringDataSet.pseudonyms) + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));
+                else if (name == null)
+                    return new FieldData(surname + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));
+                else if (surname == null)
+                    return new FieldData(name + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));
+                else
+                    return new FieldData(name + "." + surname + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));
         }
+    }
+
+    private String randomString(String[] ar) {
+        return ar[ThreadLocalRandom.current().nextInt(0, ar.length - 1)];
     }
 
     @Override
@@ -74,7 +126,7 @@ public class StringDF extends DataField {
             }
         }, new DefaultValueSetter<JComboBox<String>>() {
             @Override
-            public void setDefaultData(JComboBox<String> component) {
+            public void setDefaultData(JComboBox<String> component, SettingsPage page) {
                 for (int i = 0; i < typeValues.length; i++) {
                     if (type.equals(typeValues[i])) {
                         component.setSelectedIndex(i);
@@ -104,18 +156,20 @@ public class StringDF extends DataField {
             public void onSave(PageField<JTextField> pageField) {
                 try {
                     length = Integer.parseInt(pageField.getDataString());
-                } catch (Exception e) {
-                    //TODO: Print error message
+                } catch (Exception ignored) {
                 }
             }
         }, new DefaultValueSetter<JTextField>() {
             @Override
-            public void setDefaultData(JTextField component) {
+            public void setDefaultData(JTextField component, SettingsPage page) {
                 component.setText(String.valueOf(length));
             }
         });
 
-        return new SettingsPage("String Field Settings", field, typeSelector, lengthField);
+        if (!type.equals("random"))
+            return new SettingsPage("String Field Settings", this, field, typeSelector);
+        else
+            return new SettingsPage("String Field Settings", this, field, typeSelector, lengthField);
     }
 
     @Override

@@ -3,7 +3,7 @@ package table.dataFields.fields;
 import generator.FieldData;
 import generator.GeneratorSession;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
+import table.dataFields.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
@@ -70,7 +70,7 @@ public class DateDF extends DataField {
             }
         }, new DefaultValueSetter<JTextField>() {
             @Override
-            public void setDefaultData(JTextField component) {
+            public void setDefaultData(JTextField component, SettingsPage page) {
                 try {
                     component.setText(parseString(minDate));
                 } catch (Exception ignored) {
@@ -94,7 +94,7 @@ public class DateDF extends DataField {
             }
         }, new DefaultValueSetter<JTextField>() {
             @Override
-            public void setDefaultData(JTextField component) {
+            public void setDefaultData(JTextField component, SettingsPage page) {
                 try {
                     component.setText(parseString(maxDate));
                 } catch (Exception ignored) {
@@ -103,7 +103,7 @@ public class DateDF extends DataField {
             }
         });
 
-        return new SettingsPage("Date Field Settings", field, minDateField, maxDateField);
+        return new SettingsPage("Date Field Settings", this, field, minDateField, maxDateField);
     }
 
     @Override

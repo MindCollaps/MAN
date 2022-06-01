@@ -2,11 +2,11 @@ package table;
 
 import gui.VisualEngine;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
 import gui.pages.settingsPage.pageField.PageFieldGrabber;
+import table.dataFields.VisualDataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +19,8 @@ import java.util.ArrayList;
  */
 public class Table extends JPanel {
 
-    private final Icon icon = new ImageIcon("Pictures/options2.jpg");
-    private final Icon icon2 = new ImageIcon("Pictures/plus.jpg");
+    private final Icon icon = new ImageIcon("src/gui/pics/options2.jpg");
+    private final Icon icon2 = new ImageIcon("src/gui/pics/plus.jpg");
 
     private final VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
 
@@ -41,10 +41,8 @@ public class Table extends JPanel {
 
     private String primaryKeyName;
 
-    private String tableGuiName;
-
-    public Table(VisualEngine gui, String tableGuiName) {
-        this.tableGuiName = tableGuiName;
+    public Table(VisualEngine gui, int tableGuiName) {
+        tableNumber = tableGuiName;
         this.gui = gui;
         this.dataFields = new ArrayList();
 
@@ -55,7 +53,9 @@ public class Table extends JPanel {
         // table gui end
 
         // text field gui
-        this.tableName = new JTextField();
+        this.tableName = new JTextField("");
+        if(tableGuiName == 0)
+            this.tableName.setText("User");
         this.tableName.setBounds(00, 0, 100, 50);
         this.add(tableName);
         // text field gui end
@@ -93,7 +93,7 @@ public class Table extends JPanel {
                         },
                         new DefaultValueSetter<JTextField>() {
                             @Override
-                            public void setDefaultData(JTextField component) {
+                            public void setDefaultData(JTextField component, SettingsPage page) {
                                 if (primaryKeyName == null)
                                     component.setText("");
                                 else
@@ -118,12 +118,12 @@ public class Table extends JPanel {
                         },
                         new DefaultValueSetter<JButton>() {
                             @Override
-                            public void setDefaultData(JButton component) {
+                            public void setDefaultData(JButton component, SettingsPage page) {
 
                             }
                         });
 
-                SettingsPage page = new SettingsPage(getTableName(), new VisualDataField(thisTable), primaryKeyNameSelector, deleteSelector);
+                SettingsPage page = new SettingsPage(getTableName(), null, new VisualDataField(thisTable, 0), primaryKeyNameSelector, deleteSelector);
                 deleteButton.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -163,7 +163,7 @@ public class Table extends JPanel {
     }
 
     public void addDataField() {
-        dataFields.add(new VisualDataField(this));
+        dataFields.add(new VisualDataField(this, dataFields.size()));
     }
 
     public void removeField(VisualDataField thisField) {
@@ -230,8 +230,6 @@ public class Table extends JPanel {
 
     public void setTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
-        this.tableGuiName = "Table " + tableNumber;
-
         renameDataFields();
     }
 
@@ -252,7 +250,7 @@ public class Table extends JPanel {
     }
 
     public String getTableGuiName() {
-        return tableGuiName;
+        return "Table " + tableNumber;
     }
 
     public String getPrimaryKeyName() {
@@ -263,7 +261,7 @@ public class Table extends JPanel {
         return gui.getTables();
     }
 
-    public void renameDataFields(){
+    public void renameDataFields() {
         for (int i = 0; i < dataFields.size(); i++) {
             dataFields.get(i).setDataFieldNumber(tableNumber, i);
         }

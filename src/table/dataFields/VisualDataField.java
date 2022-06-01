@@ -1,12 +1,12 @@
-package gui.pages.settingsPage;
+package table.dataFields;
 
 import gui.VisualEngine;
+import gui.pages.settingsPage.SettingsPage;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
 import gui.pages.settingsPage.pageField.PageFieldGrabber;
 import table.Table;
-import table.dataFields.DataField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,15 +14,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The VisualDataField is the actual DataField that gets displayed on the SettingsPage, its the manager for the DataField and ensures that it looks and works for the user
  */
 public class VisualDataField extends JPanel {
 
-    Icon icon = new ImageIcon("Pictures/options.jpg");
+    private final Icon icon = new ImageIcon("src/gui/pics/options.jpg");
     private final Table table;
     private final JTextArea panelNumber;
     private final JTextField name;
@@ -33,16 +31,12 @@ public class VisualDataField extends JPanel {
     // ui values
     public int upMargin = 20;
 
-    private String dataFieldNumber;
+    private String dataFieldString;
 
-    public void setDataFieldNumber(int table, int field) {
-        //panelNumber.setText("Data field "+ i);
-        //panelNumber.setText("");
-        this.dataFieldNumber = table + "." + field;
-        panelNumber.setText(this.dataFieldNumber);
-    }
+    private int dataFieldNumber;
 
-    public VisualDataField(Table table) {
+    public VisualDataField(Table table, int dataFieldNumber) {
+        this.dataFieldNumber = dataFieldNumber;
         this.table = table;
 
         this.setLayout(null);
@@ -50,7 +44,7 @@ public class VisualDataField extends JPanel {
         this.panelNumber.setEditable(false);
         this.panelNumber.setBounds(0, 0, 80, 20);
 
-        this.name = new JTextField("name");
+        this.name = new JTextField();
         this.name.setBounds(0, upMargin, 100, 50);
         this.setBackground(Color.white);
         this.comboBox = new JComboBox<>(VisualEngine.generatorDataFieldsString);
@@ -70,24 +64,63 @@ public class VisualDataField extends JPanel {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 try {
-                    dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().newInstance();
+                    try {
+                        dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().getDeclaredConstructor(Integer.class).newInstance(dataFieldNumber);
+                    } catch (Exception es) {
+                        try {
+                            dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().getDeclaredConstructor().newInstance();
+                        } catch (Exception ignored){
+
+                        }
+                    }
                 } catch (Exception er) {
                     er.printStackTrace();
                 }
             }
         });
 
+        setDefaultStuff();
+
         //This insures that the index ß generator data field will be loaded, else it would be null which could cause issues
+        //It tries to call the constuctor where the index of the field is given, so the field can set default values
         try {
-            dataField = VisualEngine.generatorDataFields[0].getClass().newInstance();
+            dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().getDeclaredConstructor(int.class).newInstance(dataFieldNumber);
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                dataField = VisualEngine.generatorDataFields[comboBox.getSelectedIndex()].getClass().getDeclaredConstructor().newInstance();
+            } catch (Exception ignored){
+
+            }
         }
 
         this.add(name);
         this.add(comboBox);
         this.add(options);
         this.add(panelNumber);
+    }
+
+    public void setDataFieldNumber(int table, int field) {
+        //panelNumber.setText("Data field "+ i);
+        //panelNumber.setText("");
+        this.dataFieldString = table + "." + field;
+        panelNumber.setText(this.dataFieldString);
+        dataFieldNumber = field;
+    }
+
+    private void setDefaultStuff(){
+        switch (dataFieldNumber) {
+            case 0 -> this.name.setText("Name");
+            case 1 -> this.name.setText("Surname");
+            case 2 -> this.name.setText("EMail");
+            case 3 -> {
+                this.name.setText("DateOfBirth");
+                this.comboBox.setSelectedIndex(2);
+            }
+            case 4 -> this.name.setText("CountryOfBirth");
+            case 5 -> this.name.setText("Address");
+            case 6 -> this.name.setText("Username");
+            case 7 -> this.name.setText("Password");
+        }
     }
 
     private void openSettings() {
@@ -103,7 +136,7 @@ public class VisualDataField extends JPanel {
 
             JButton deleteButton = new JButton("Delete");
 
-            PageField<JButton> deleteSelector = new PageField<>("Delete Table", deleteButton,
+            PageField<JButton> deleteSelector = new PageField<>("Delete Cell", deleteButton,
                     new PageFieldGrabber<JButton>() {
                         @Override
                         public String getDataString(PageField<JButton> page, JButton jButton) {
@@ -118,7 +151,7 @@ public class VisualDataField extends JPanel {
                     },
                     new DefaultValueSetter<JButton>() {
                         @Override
-                        public void setDefaultData(JButton component) {
+                        public void setDefaultData(JButton component, SettingsPage page) {
 
                         }
                     });
@@ -126,7 +159,8 @@ public class VisualDataField extends JPanel {
             PageField[] fields = dataFieldPage.getFields().toArray(new PageField[dataFieldPage.getFields().size() + 1]);
             fields[fields.length -1] = deleteSelector;
 
-            SettingsPage page = new SettingsPage(dataFieldPage.getSettingsNameLabel(), this, fields);
+            SettingsPage page = new SettingsPage(dataFieldPage.getSettingsNameLabel(), null, this, fields);
+
             deleteButton.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -150,11 +184,15 @@ public class VisualDataField extends JPanel {
         return name.getText();
     }
 
-    public String getDataFieldNumber() {
-        return dataFieldNumber;
+    public String getDataFieldString() {
+        return dataFieldString;
     }
 
     public Table getTable() {
         return table;
+    }
+
+    public int getDataFieldNumber() {
+        return dataFieldNumber;
     }
 }

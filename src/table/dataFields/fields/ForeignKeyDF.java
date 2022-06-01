@@ -5,7 +5,7 @@ import generator.FieldData;
 import generator.GeneratorSession;
 import generator.TableData;
 import gui.pages.settingsPage.SettingsPage;
-import gui.pages.settingsPage.VisualDataField;
+import table.dataFields.VisualDataField;
 import gui.pages.settingsPage.pageField.DefaultValueSetter;
 import gui.pages.settingsPage.pageField.PageField;
 import gui.pages.settingsPage.pageField.PageFieldAction;
@@ -71,7 +71,7 @@ public class ForeignKeyDF extends DataField {
             }
         }, new DefaultValueSetter<JComboBox<String>>() {
             @Override
-            public void setDefaultData(JComboBox<String> component) {
+            public void setDefaultData(JComboBox<String> component, SettingsPage page) {
                 if(foreignTable == null)
                     return;
                 for (int i = 0; i < tableNames.length; i++) {
@@ -83,7 +83,7 @@ public class ForeignKeyDF extends DataField {
             }
         });
 
-        return new SettingsPage("Foreign Key Settings", field, foreignTableSelector);
+        return new SettingsPage("Foreign Key Settings", this, field, foreignTableSelector);
     }
 
     @Override

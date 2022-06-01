@@ -13,11 +13,14 @@ import table.dataFields.fields.StringDF;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class VisualEngine extends JFrame {
 
-    Icon icon = new ImageIcon("Pictures/plus.jpg");
+    Icon icon = new ImageIcon("src/gui/pics/plus.jpg");
+    Image windowIcon = Toolkit.getDefaultToolkit().getImage("src/gui/pics/manIcon.PNG");
+    Image manIc = Toolkit.getDefaultToolkit().getImage("src/gui/pics/man.PNG");
 
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
@@ -26,7 +29,7 @@ public class VisualEngine extends JFrame {
     private final ArrayList<JLabel> tableCountLabels = new ArrayList<>();
     // ui values
     private final int canvasMarginSide = 20;
-    private final int canvasMarginTop = 20;
+    private final int canvasMarginTop = 130;
     private final int canvasMarginBottom = 200;
     private final int baseCanvasHeight = 800;
     private final int baseCanvasLenght = 1200;
@@ -42,13 +45,15 @@ public class VisualEngine extends JFrame {
     private JPanel contentPanel;
     private JPanel bottomPanel;
 
+    private JLabel man;
+    private JLabel manText;
+
     //Generator stuff
     private GeneratorSession session;
 
-    private final ArrayList<JDialog> settingPages;
+    private JDialog settingPage;
 
     public VisualEngine() {
-        settingPages = new ArrayList<>();
         loadGeneratorFields();
         System.out.println("Loaded " + generatorDataFields.length + " generator Field Classes!");
         buildGui();
@@ -56,6 +61,8 @@ public class VisualEngine extends JFrame {
     }
 
     private void buildGui() {
+        this.setTitle("MAN - Mad Accessible Network");
+        this.setIconImage(windowIcon);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -63,7 +70,7 @@ public class VisualEngine extends JFrame {
             }
         });
 
-        this.setBounds(40, 40, 1500, 700);
+        this.setBounds(40, 40, 1900, 1000);
 
         this.setLayout(null);
 
@@ -85,6 +92,15 @@ public class VisualEngine extends JFrame {
         canvas.add(this.addTableButton);
         setAddTableButtonPosition(tableMargin * tables.size());
         //add table button gui end
+        man = new JLabel("", new ImageIcon(manIc), JLabel.CENTER);
+        man.setBounds(580, 10, 100, 100);
+
+        manText = new JLabel("MAN");
+        manText.setBounds(680, 40, 200, 30);
+        manText.setFont(new Font("TeleNeo", Font.PLAIN, 32));
+
+        add(manText);
+        add(man);
 
 
         Frame frame = this;
@@ -143,9 +159,8 @@ public class VisualEngine extends JFrame {
     }
 
     public void addTable(){
-        String tableGuiName = "Table " + tables.size();
         canvas.remove(addTableButton);
-        Table newTable = new Table(this, tableGuiName);
+        Table newTable = new Table(this, tables.size());
 
         canvas.add(newTable);
         newTable.setPosition(tableMargin * tables.size() + 50);
@@ -153,7 +168,7 @@ public class VisualEngine extends JFrame {
         tables.add(newTable);
 
         // table text
-        JLabel newText = new JLabel(tableGuiName);
+        JLabel newText = new JLabel(newTable.getTableGuiName());
         newTable.setTableNumber(tables.size()-1);
         newText.setBounds(50, (tableMargin * tables.size()) - tableMargin + 30, 50, 20);
         tableName_text.add(newText);
@@ -218,7 +233,6 @@ public class VisualEngine extends JFrame {
         setBottomBarSize();
 
         this.repaint();
-        System.out.println(canvas.getHeight());
     }
 
     private void setBottomBarSize() {
@@ -269,7 +283,7 @@ public class VisualEngine extends JFrame {
         if (page != null) {
             JDialog settingsPage = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
             settingsPage.setResizable(false);
-            this.settingPages.add(settingsPage);
+            this.settingPage = settingsPage;
             settingsPage.setContentPane(page);
             settingsPage.setBounds(100, 100, page.getWidth(), page.getHeight());
             settingsPage.repaint();
@@ -281,8 +295,8 @@ public class VisualEngine extends JFrame {
     }
 
     public void closeSettings() {
-        if (this.settingPages.size() != 0) {
-            this.settingPages.get(this.settingPages.size() -1).dispose();
+        if (this.settingPage != null) {
+            this.settingPage.dispose();
         }
     }
 
