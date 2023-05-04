@@ -34,13 +34,27 @@ public class StringDF extends DataField {
     public StringDF(int index) {
         super(index);
         switch (this.index) {
-            case 0 -> this.type = "Name";
-            case 1 -> this.type = "Surname";
-            case 2 -> this.type = "E-Mail";
-            case 4 -> this.type = "Country";
-            case 5 -> this.type = "City";
-            case 6 -> this.type = "Username";
-            case 7 -> this.type = "random";
+            case 0:
+                this.type = "Name";
+                break;
+            case 1:
+                this.type = "Surname";
+                break;
+            case 2:
+                this.type = "E-Mail";
+                break;
+            case 4:
+                this.type = "Country";
+                break;
+            case 5:
+                this.type = "City";
+                break;
+            case 6:
+                this.type = "Username";
+                break;
+            case 7:
+                this.type = "random";
+                break;
         }
     }
 
@@ -93,11 +107,11 @@ public class StringDF extends DataField {
                         } else if (df.type.equalsIgnoreCase("surname")) {
                             surname = dataFieldDatum.getFieldData()[session.getCurrentTableData().getCurrentDataFieldData().getCurrentIndex()].getValuePlain();
                         }
-                        if(name != null && surname != null)
+                        if (name != null && surname != null)
                             break;
                     }
                 }
-                if(name == null && surname == null)
+                if (name == null && surname == null)
                     return new FieldData(randomString(StringDataSet.pseudonyms) + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));
                 else if (name == null)
                     return new FieldData(surname + "@" + randomString(StringDataSet.emailDomains) + randomString(StringDataSet.emailDomainEndings));

@@ -5,8 +5,12 @@ import table.dataFields.DataType;
 /**
  * This class give the basis for the SQL Text generation
  */
-public record FieldData(String data) {
+public class FieldData {
+    private final String data;
 
+    public FieldData(String data) {
+        this.data = data;
+    }
     public String getData(DataType type) {
         if (type.isValuePlain())
             return data;
@@ -14,7 +18,7 @@ public record FieldData(String data) {
             return "'" + data + "'";
     }
 
-    public String getValuePlain(){
+    public String getValuePlain() {
         return data;
     }
 

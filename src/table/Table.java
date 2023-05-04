@@ -19,8 +19,8 @@ import java.util.ArrayList;
  */
 public class Table extends JPanel {
 
-    private final Icon icon = new ImageIcon("src/gui/pics/options2.jpg");
-    private final Icon icon2 = new ImageIcon("src/gui/pics/plus.jpg");
+    private Icon icon;
+    private Icon icon2;
 
     private final VisualEngine gui; // table needs a reference to the gui because everytime a datafields gets added to this table the gui needs to know if its large enought to update the canvas lenght
 
@@ -45,6 +45,13 @@ public class Table extends JPanel {
         tableNumber = tableGuiName;
         this.gui = gui;
         this.dataFields = new ArrayList();
+
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
+        java.net.URL imgURLI = classLoader.getResource("gui/pics/options2.jpg");
+        icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(imgURLI));
+        java.net.URL imgURLW = classLoader.getResource("gui/pics/plus.jpg");
+        icon2 = new ImageIcon(Toolkit.getDefaultToolkit().getImage(imgURLW));
 
         // table gui
         //this.setBackground(Color.white);

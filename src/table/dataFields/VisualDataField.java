@@ -109,17 +109,18 @@ public class VisualDataField extends JPanel {
 
     private void setDefaultStuff(){
         switch (dataFieldNumber) {
-            case 0 -> this.name.setText("Name");
-            case 1 -> this.name.setText("Surname");
-            case 2 -> this.name.setText("EMail");
-            case 3 -> {
+            case 0 : this.name.setText("Name");break;
+            case 1 : this.name.setText("Surname");break;
+            case 2 : this.name.setText("EMail");break;
+            case 3 : {
                 this.name.setText("DateOfBirth");
                 this.comboBox.setSelectedIndex(2);
+                break;
             }
-            case 4 -> this.name.setText("CountryOfBirth");
-            case 5 -> this.name.setText("Address");
-            case 6 -> this.name.setText("Username");
-            case 7 -> this.name.setText("Password");
+            case 4 : this.name.setText("CountryOfBirth");break;
+            case 5 : this.name.setText("Address");break;
+            case 6 : this.name.setText("Username");break;
+            case 7 : this.name.setText("Password");break;
         }
     }
 

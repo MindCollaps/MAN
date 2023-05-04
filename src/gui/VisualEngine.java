@@ -17,10 +17,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class VisualEngine extends JFrame {
-
-    Icon icon = new ImageIcon("src/gui/pics/plus.jpg");
-    Image windowIcon = Toolkit.getDefaultToolkit().getImage("src/gui/pics/manIcon.PNG");
-    Image manIc = Toolkit.getDefaultToolkit().getImage("src/gui/pics/man.PNG");
+    Icon icon;
+    Image windowIcon;
+    Image manIc;
 
     public static DataField[] generatorDataFields;
     public static String[] generatorDataFieldsString;
@@ -56,8 +55,17 @@ public class VisualEngine extends JFrame {
     public VisualEngine() {
         loadGeneratorFields();
         System.out.println("Loaded " + generatorDataFields.length + " generator Field Classes!");
-        buildGui();
 
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
+        java.net.URL imgURLI = classLoader.getResource("gui/pics/plus.jpg");
+        icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(imgURLI));
+        java.net.URL imgURLW = classLoader.getResource("gui/pics/manIcon.PNG");
+        windowIcon = Toolkit.getDefaultToolkit().getImage(imgURLW);
+        java.net.URL imgURLM = classLoader.getResource("gui/pics/man.PNG");
+        manIc = Toolkit.getDefaultToolkit().getImage(imgURLM);
+
+        buildGui();
     }
 
     private void buildGui() {
