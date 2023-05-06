@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
  */
 public class VisualDataField extends JPanel {
 
-    private final Icon icon = new ImageIcon("src/gui/pics/options.jpg");
+    private final Icon icon;
     private final Table table;
     private final JTextArea panelNumber;
     private final JTextField name;
@@ -38,6 +38,11 @@ public class VisualDataField extends JPanel {
     public VisualDataField(Table table, int dataFieldNumber) {
         this.dataFieldNumber = dataFieldNumber;
         this.table = table;
+
+        ClassLoader classLoader = this.getClass().getClassLoader();
+
+        java.net.URL imgURLI = classLoader.getResource("gui/pics/options.jpg");
+        icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(imgURLI));
 
         this.setLayout(null);
         this.panelNumber = new JTextArea("Data field 1");
